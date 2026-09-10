@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<title>PRD — Atumcell Continuous Assurance (IT)</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 22mm 18mm;
+    @bottom-center {
+      content: "Atumcell · Continuous Assurance (IT) · PRD v1.0 · Halaman " counter(page);
+      font-size: 8.5pt;
+      color: #6a7382;
+      font-family: "Helvetica", "Arial", sans-serif;
+    }
+  }
+  @page :first {
+    margin: 0;
+    @bottom-center { content: none; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.45;
+    color: #14181f;
+  }
+  .cover {
+    min-height: 297mm;
+    padding: 48mm 22mm 28mm;
+    background: #10141a;
+    color: #e8ecf2;
+    page-break-after: always;
+  }
+  .cover .eyebrow {
+    color: #ff6b35;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 10pt;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-size: 32pt;
+    line-height: 1.05;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+  .cover .sub {
+    font-size: 13pt;
+    color: #b4bcc8;
+    max-width: 42ch;
+    margin: 0 0 36px;
+  }
+  .cover-meta {
+    border-top: 1px solid #3a4556;
+    padding-top: 18px;
+    margin-top: 40px;
+    font-size: 9.5pt;
+    color: #8a93a3;
+  }
+  .cover-meta strong { color: #e8ecf2; }
+  .cover-meta div { margin-bottom: 6px; }
+  h2 {
+    font-size: 14pt;
+    margin: 22px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #14181f;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 11.5pt;
+    margin: 16px 0 6px;
+    color: #1c2430;
+    page-break-after: avoid;
+  }
+  h4 {
+    font-size: 10.5pt;
+    margin: 12px 0 4px;
+    color: #e8491d;
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 10px; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 14px;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid #b8c0cc;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #eef1f5;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 8.5pt;
+    letter-spacing: 0.04em;
+  }
+  .callout {
+    border-left: 3px solid #e8491d;
+    background: #f7f8fa;
+    padding: 10px 12px;
+    margin: 10px 0 14px;
+    font-size: 10pt;
+  }
+  .toc a { color: #14181f; text-decoration: none; }
+  .toc li { margin-bottom: 4px; }
+  .muted { color: #6a7382; }
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    background: #1c2430;
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .section { page-break-inside: avoid; }
+  .keep { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="eyebrow">Product Requirements Document</div>
+  <h1>Continuous<br/>Assurance (IT)</h1>
+  <p class="sub">
+    Keyakinan berkelanjutan atas postur keamanan eksternal — dengan validasi manusia,
+    penutupan terverifikasi, dan keluaran untuk auditor, asuransi, serta sponsor PE.
+  </p>
+  <div class="cover-meta">
+    <div><strong>Produk</strong> · Atumcell Continuous Assurance (IT)</div>
+    <div><strong>Versi dokumen</strong> · 1.0</div>
+    <div><strong>Status</strong> · Draft untuk review lead / product</div>
+    <div><strong>Tanggal</strong> · 10 September 2026</div>
+    <div><strong>Penulis</strong> · Ilham Abdullah · Atumcell</div>
+    <div><strong>Audiens</strong> · Leadership, Product, Engineering, Delivery / Pentest</div>
+    <div><strong>Artefak terkait</strong> · Prototype <code>ca-app</code> · Mock-up HTML · Skrip narasi</div>
+  </div>
+</section>
+
+<h2>1. Ringkasan eksekutif</h2>
+<p>
+Continuous Assurance (IT) adalah produk Atumcell untuk menjawab celah antara
+<strong>scan otomatis terus-menerus</strong> (banyak noise) dan
+<strong>pentest berkala</strong> (dalam, tapi cepat kedaluwarsa).
+Produk memantau attack surface eksternal secara berkelanjutan, memvalidasi temuan penting
+dengan manusia, dan menutup temuan hanya setelah retest — lengkap dengan
+<strong>sertifikat penutupan bertanggal</strong>.
+</p>
+<div class="callout">
+  <strong>Bukan</strong> compliance automation ala Vanta/Drata.
+  <strong>Bukan</strong> security rating murni ala Bitsight.
+  <strong>Ya:</strong> continuous external monitoring + human validation + verified closure
+  + portofolio PE + binder asuransi.
+</div>
+<p>
+Analog terdekat di pasar: <strong>Rapid7 Vector Command</strong> (continuous recon + human red team).
+Yang tidak ditiru: Exposure Command Ultimate (CNAPP, agent, ratusan konektor).
+</p>
+
+<h2>2. Masalah &amp; peluang</h2>
+<h3>2.1 Masalah pelanggan</h3>
+<ol>
+  <li><strong>Noise otomatis</strong> — alat EASM/scanner menghasilkan banyak temuan tanpa bukti eksploitasi.</li>
+  <li><strong>Assurance kedaluwarsa</strong> — laporan pentest tahunan tidak merefleksikan perubahan attack surface mingguan.</li>
+  <li><strong>Klaim berlebihan</strong> — “sudah dipantau” sering disamakan dengan “sudah aman”, tanpa memisahkan tervalidasi vs belum diperiksa.</li>
+  <li><strong>Bukti sulit dipakai</strong> — auditor, underwriter, dan IC PE butuh artefak bertanggal, bukan screenshot scan.</li>
+  <li><strong>Sponsor PE buta spot</strong> — sulit roll-up risiko lintas portofolio perusahaan.</li>
+</ol>
+<h3>2.2 Peluang Atumcell</h3>
+<ul>
+  <li>Keahlian pentest / red team Atumcell menjadi diferensiator inti (bukan add-on).</li>
+  <li>Posisi mid-market &amp; PE: lebih fokus dari platform CTEM enterprise-heavy.</li>
+  <li>Sinergi potensial dengan AtumScan / AtumScreen / SpoofCheck (keputusan terbuka).</li>
+</ul>
+
+<h2>3. Tujuan produk</h2>
+<h3>3.1 Goals</h3>
+<ol>
+  <li>Memberikan <strong>assurance yang bisa dibuktikan</strong> atas eksposur eksternal.</li>
+  <li>Memisahkan secara eksplisit: human-validated / automated / unscanned.</li>
+  <li>Menghubungkan monitoring kontinu dengan siklus pentest Atumcell.</li>
+  <li>Menghasilkan artefak penutupan (sertifikat) dan laporan untuk auditor, asuransi, PE.</li>
+  <li>Menyediakan roll-up portofolio untuk sponsor PE + pipeline due diligence.</li>
+</ol>
+<h3>3.2 Non-goals (v1)</h3>
+<ul>
+  <li>Platform compliance penuh (kebijakan, HR, vendor risk ala Vanta).</li>
+  <li>CNAPP / agent endpoint / 500+ cloud connector.</li>
+  <li>Vulnerability management internal penuh (VM agent-based) sebagai fokus utama.</li>
+  <li>Menggantikan seluruh stack XDR/SIEM.</li>
+</ul>
+
+<h2>4. Personas &amp; buyer</h2>
+<table>
+  <thead>
+    <tr><th>Persona</th><th>Kebutuhan utama</th><th>Kesuksesan</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CISO / Head of IT</strong> (mid-market)</td>
+      <td>Prioritas nyata, kurangi false positive, bukti untuk board &amp; asuransi</td>
+      <td>Skor &amp; critical turun; sertifikat siap renewal</td>
+    </tr>
+    <tr>
+      <td><strong>Security / AppSec engineer</strong></td>
+      <td>Antrian kerja jelas, SLA, retest cepat</td>
+      <td>Kanban bergerak; retest tidak menghambat</td>
+    </tr>
+    <tr>
+      <td><strong>Sponsor PE / Operating partner</strong></td>
+      <td>Roll-up portofolio, agenda IC, DD target</td>
+      <td>Matriks risiko &amp; perusahaan berisiko terlihat</td>
+    </tr>
+    <tr>
+      <td><strong>Underwriter / auditor</strong> (secondary)</td>
+      <td>Bukti teknis bertanggal, binder</td>
+      <td>Pack bukti bisa dilampirkan tanpa penjelasan panjang</td>
+    </tr>
+  </tbody>
+</table>
+<div class="callout">
+  <strong>Keputusan terbuka:</strong> buyer utama — CISO mid-market, sponsor PE, atau keduanya?
+  PRD ini merancang agar keduanya dilayani, dengan company tenant sebagai unit default
+  dan PE Portfolio sebagai modul sponsor.
+</div>
+
+<h2>5. Positioning &amp; kompetitor</h2>
+<table>
+  <thead>
+    <tr><th>Tipe</th><th>Contoh</th><th>Kekuatan mereka</th><th>Celah Atumcell</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Security ratings</td><td>Bitsight, SecurityScorecard</td><td>Skor &amp; grade eksekutif</td><td>Validasi exploit manusia jarang</td></tr>
+    <tr><td>EASM / CTEM</td><td>UpGuard, CyCognito, Halo</td><td>Inventaris surface</td><td>Klaim “otomatis = selesai”</td></tr>
+    <tr><td>PTaaS</td><td>Cobalt, Synack</td><td>Manusia + retest</td><td>Engagement, kurang continuous + PE</td></tr>
+    <tr><td>Compliance</td><td>Vanta, Drata</td><td>Kebijakan &amp; connector</td><td>Lemah di bukti teknis eksternal tervalidasi</td></tr>
+    <tr><td>Rapid7</td><td>Vector Command (+ Exposure Cmd)</td><td>Continuous red team + CTEM</td><td>Enterprise-heavy; sertifikat &amp; PE mid-market kurang tonjol</td></tr>
+  </tbody>
+</table>
+<h3>5.1 Diferensiator wajib di produk</h3>
+<ol>
+  <li>Label <strong>human-validated</strong> eksplisit di setiap temuan.</li>
+  <li><strong>Sertifikat penutupan</strong> bertanggal setelah retest.</li>
+  <li><strong>Siklus pengujian</strong> menyambung monitoring ↔ pentest.</li>
+  <li><strong>Portofolio PE</strong> + due diligence.</li>
+  <li><strong>Binder asuransi</strong> sebagai laporan pembeda.</li>
+</ol>
+
+<h2>6. Prinsip produk</h2>
+<ol>
+  <li><strong>Prove, don’t claim</strong> — jangan menyamakan scanned dengan secured.</li>
+  <li><strong>Human in the loop untuk yang penting</strong> — critical / KEV / high-impact wajib jalur validasi.</li>
+  <li><strong>Closure is a verb</strong> — tutup hanya lewat verifikasi, bukan drag ke “done”.</li>
+  <li><strong>Artefak > dashboard</strong> — output harus bisa dilampirkan ke pihak ketiga.</li>
+  <li><strong>Agentless-first (v1)</strong> — fokus eksternal; perluasan internal opsional kemudian.</li>
+  <li><strong>UI jujur</strong> — coverage gap (unscanned) ditampilkan terang-terangan.</li>
+</ol>
+
+<h2>7. Ruang lingkup</h2>
+<h3>7.1 In scope — MVP / v1</h3>
+<ul>
+  <li>Discovery attack surface eksternal (DNS, CT, IP range, cloud bucket publik, related domain).</li>
+  <li>Finding management dengan severity, KEV, SLA, owner.</li>
+  <li>Antrian &amp; kuota human validation + emergent KEV queue.</li>
+  <li>Remediation kanban + verified closure + sertifikat.</li>
+  <li>Testing cycle: usulan scope, kuota, riwayat uji.</li>
+  <li>Evidence readiness sempit (CIS teknis, SOC2 CC teknis, ISO Annex A teknis, asuransi).</li>
+  <li>Reports multi-audiens termasuk insurance binder.</li>
+  <li>PE Portfolio: KPI, daftar perusahaan, matriks, DD pipeline.</li>
+  <li>Multi-tenant company view; tema light/dark.</li>
+</ul>
+<h3>7.2 Out of scope — v1</h3>
+<ul>
+  <li>Agent / EDR / cloud posture penuh (CSPM/CNAPP).</li>
+  <li>Policy library &amp; employee security training.</li>
+  <li>Vendor risk management penuh.</li>
+  <li>Mobile app native.</li>
+  <li>OT / ICS Continuous Assurance (produk terpisah jika ada).</li>
+</ul>
+
+<h2>8. Journey pengguna utama</h2>
+<h3>8.1 Assurance cycle (inti)</h3>
+<p><strong>Discover → Validate → Prioritize → Remediate</strong></p>
+<ol>
+  <li><strong>Discover</strong> — sweep menemukan aset &amp; perubahan surface.</li>
+  <li><strong>Validate</strong> — manusia mengonfirmasi/menolak temuan otomatis; escalate bila perlu.</li>
+  <li><strong>Prioritize</strong> — critical + KEV + dampak bisnis jadi antrian kerja.</li>
+  <li><strong>Remediate</strong> — perbaikan → retest → sertifikat penutupan.</li>
+</ol>
+<h3>8.2 Journey CISO (mingguan)</h3>
+<ol>
+  <li>Buka Overview: skor, critical aktif, % human-validated.</li>
+  <li>Review KEV / emergent queue.</li>
+  <li>Generate laporan board atau binder asuransi.</li>
+</ol>
+<h3>8.3 Journey engineer</h3>
+<ol>
+  <li>Filter findings pending / critical.</li>
+  <li>Buka detail → bukti &amp; langkah reproduksi.</li>
+  <li>Minta validasi atau tandai fixed → request retest.</li>
+  <li>Gerakkan kartu di Remediation; tutup via verifikasi.</li>
+</ol>
+<h3>8.4 Journey PE sponsor</h3>
+<ol>
+  <li>Buka PE Portfolio: KPI dana, perusahaan berisiko.</li>
+  <li>Filter / klik matriks risiko.</li>
+  <li>Review DD targets &amp; rekomendasi.</li>
+</ol>
+
+<h2>9. Persyaratan fungsional</h2>
+<p>Prioritas: <span class="badge">P0</span> wajib MVP · <span class="badge">P1</span> penting · <span class="badge">P2</span> later</p>
+
+<h3>9.1 Overview / Dashboard</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>OV-01</td><td>Tampilkan skor eksposur, grade, delta periode, last sweep</td><td>P0</td></tr>
+    <tr><td>OV-02</td><td>Tampilkan metrik: % human-validated, critical aktif, open findings, assets monitored</td><td>P0</td></tr>
+    <tr><td>OV-03</td><td>Pisahkan coverage: human validated / automated / unscanned</td><td>P0</td></tr>
+    <tr><td>OV-04</td><td>Strip siklus Discover→Validate→Prioritize→Remediate dengan deep-link</td><td>P0</td></tr>
+    <tr><td>OV-05</td><td>Daftar priority findings + activity feed</td><td>P0</td></tr>
+    <tr><td>OV-06</td><td>Tren skor &amp; findings (12 minggu)</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.2 Attack Surface</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>AS-01</td><td>Inventaris aset: host, tipe, sumber discovery, tech, ports, status, risk, findings count</td><td>P0</td></tr>
+    <tr><td>AS-02</td><td>Status aset: verified / auto / unscanned wajib terlihat</td><td>P0</td></tr>
+    <tr><td>AS-03</td><td>Filter, search, export CSV</td><td>P0</td></tr>
+    <tr><td>AS-04</td><td>Sumber discovery: DNS, CT, IP range, cloud, WHOIS pivot, scope pentest</td><td>P1</td></tr>
+    <tr><td>AS-05</td><td>Notifikasi aset baru (feed / list newly discovered)</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.3 Findings</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>FD-01</td><td>Daftar findings dengan severity, KEV flag, validation badge, SLA, owner</td><td>P0</td></tr>
+    <tr><td>FD-02</td><td>Filter severity / validation / KEV / search</td><td>P0</td></tr>
+    <tr><td>FD-03</td><td>Detail: impact bisnis, evidence, steps reproduksi, remediation advice</td><td>P0</td></tr>
+    <tr><td>FD-04</td><td>Aksi: Request human validation; Mark fixed → request retest; Assign</td><td>P0</td></tr>
+    <tr><td>FD-05</td><td>Validation status: verified | pending | auto</td><td>P0</td></tr>
+    <tr><td>FD-06</td><td>Metadata validator, validatedAt, method</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.4 Human validation &amp; KEV</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>HV-01</td><td>Kuota validasi manusia per periode; request mengurangi kuota</td><td>P0</td></tr>
+    <tr><td>HV-02</td><td>Retest setelah remediasi tidak memotong kuota validasi</td><td>P0</td></tr>
+    <tr><td>HV-03</td><td>Modal / queue emergent KEV dengan SLA ketat (mis. &lt; 24 jam)</td><td>P0</td></tr>
+    <tr><td>HV-04</td><td>Hasil validasi: confirm exploit / false positive / escalate severity</td><td>P0</td></tr>
+    <tr><td>HV-05</td><td>Activity feed mencatat aksi validasi &amp; penutupan</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.5 Remediation &amp; Verification</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>RM-01</td><td>Kanban: New → Assigned → In progress → Awaiting verification → Closed verified</td><td>P0</td></tr>
+    <tr><td>RM-02</td><td>Drag-and-drop antar kolom (kecuali aturan penutupan)</td><td>P0</td></tr>
+    <tr><td>RM-03</td><td><strong>Hard rule:</strong> masuk Closed verified hanya lewat alur verifikasi (bukan drag bebas)</td><td>P0</td></tr>
+    <tr><td>RM-04</td><td>Verifikasi berhasil menerbitkan sertifikat penutupan (cert ID, hash/metadata, tanggal, validator)</td><td>P0</td></tr>
+    <tr><td>RM-05</td><td>Daftar closed findings + tautan sertifikat</td><td>P0</td></tr>
+    <tr><td>RM-06</td><td>SLA pill (on track / soon / late) di kartu</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.6 Testing Cycle</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>TC-01</td><td>Tampilkan next pentest / window pengujian</td><td>P0</td></tr>
+    <tr><td>TC-02</td><td>Usulan scope dari monitoring (proposed targets + alasan + prioritas)</td><td>P0</td></tr>
+    <tr><td>TC-03</td><td>Riwayat pengujian (tipe, scope, findings, status, tanggal)</td><td>P0</td></tr>
+    <tr><td>TC-04</td><td>Aturan scope &amp; test rules (modal konfigurasi)</td><td>P1</td></tr>
+    <tr><td>TC-05</td><td>Request pengujian ad-hoc ke tim Atumcell</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.7 Evidence Readiness</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>EV-01</td><td>Progress % per kerangka teknis sempit (CIS IG1, SOC2 CC teknis, ISO A teknis, NIS2/DORA subset, insurance binder)</td><td>P0</td></tr>
+    <tr><td>EV-02</td><td>Pemetaan kontrol → bukti yang bisa dibuktikan dari luar / dari CA</td><td>P1</td></tr>
+    <tr><td>EV-03</td><td>Export evidence pack (PDF/ZIP)</td><td>P1</td></tr>
+    <tr><td>EV-04</td><td>UI menyatakan batas: bukan compliance platform penuh</td><td>P0</td></tr>
+  </tbody>
+</table>
+
+<h3>9.8 Reports</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>RP-01</td><td>Template laporan multi-audiens: executive, technical, PE IC, insurance underwriter binder</td><td>P0</td></tr>
+    <tr><td>RP-02</td><td>Insurance binder ditandai sebagai diferensiator</td><td>P0</td></tr>
+    <tr><td>RP-03</td><td>Riwayat laporan (periode, recipients, format, created)</td><td>P1</td></tr>
+    <tr><td>RP-04</td><td>Generate / download (async OK di v1)</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.9 PE Portfolio</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>PE-01</td><td>KPI dana: #companies, avg score, critical open, % verified</td><td>P0</td></tr>
+    <tr><td>PE-02</td><td>Daftar perusahaan dengan filter sektor/tier/risiko</td><td>P0</td></tr>
+    <tr><td>PE-03</td><td>Attention / IC agenda untuk perusahaan berisiko</td><td>P0</td></tr>
+    <tr><td>PE-04</td><td>Matriks risiko interaktif (klik sel → filter)</td><td>P1</td></tr>
+    <tr><td>PE-05</td><td>Due diligence pipeline (stage, grade, score, finding, rekomendasi)</td><td>P0</td></tr>
+    <tr><td>PE-06</td><td>Drill-down ke tenant perusahaan</td><td>P1</td></tr>
+  </tbody>
+</table>
+
+<h3>9.10 Platform / lintas modul</h3>
+<table>
+  <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th></tr></thead>
+  <tbody>
+    <tr><td>PL-01</td><td>Tenant switcher (perusahaan)</td><td>P0</td></tr>
+    <tr><td>PL-02</td><td>AuthN/AuthZ role: Admin, Analyst, Validator, Viewer, PE Sponsor</td><td>P0</td></tr>
+    <tr><td>PL-03</td><td>Theme light / dark</td><td>P1</td></tr>
+    <tr><td>PL-04</td><td>Toast / notifikasi aksi penting</td><td>P1</td></tr>
+    <tr><td>PL-05</td><td>Audit log aksi validasi &amp; penutupan</td><td>P0</td></tr>
+    <tr><td>PL-06</td><td>Branding Atumcell (logo resmi + wordmark Assurance)</td><td>P0</td></tr>
+  </tbody>
+</table>
+
+<h2>10. Persyaratan non-fungsional</h2>
+<table>
+  <thead><tr><th>Area</th><th>Requirement</th></tr></thead>
+  <tbody>
+    <tr><td>Keamanan</td><td>Enkripsi in-transit (TLS); data tenant terisolasi; least privilege; rahasia tidak di client bundle</td></tr>
+    <tr><td>Privasi</td><td>Evidence &amp; sertifikat hanya untuk role berwenang; retensi dapat dikonfigurasi</td></tr>
+    <tr><td>Kinerja</td><td>UI daftar &lt; 2s untuk 10k assets / 50k findings (pagination/virtualisasi)</td></tr>
+    <tr><td>Ketersediaan</td><td>Target 99.5% untuk portal; sweep discovery dapat delayed tanpa downtime portal</td></tr>
+    <tr><td>Observabilitas</td><td>Log sweep, validation SLA breach, job retest</td></tr>
+    <tr><td>Aksesibilitas</td><td>Kontras memadai light/dark; kontrol keyboard untuk aksi utama</td></tr>
+    <tr><td>Internasionalisasi</td><td>UI produk bahasa Inggris (v1); dokumen internal boleh ID</td></tr>
+    <tr><td>Kepatuhan delivery</td><td>Scope rules mencegah aksi destruktif di validasi</td></tr>
+  </tbody>
+</table>
+
+<h2>11. Model data (tingkat tinggi)</h2>
+<table>
+  <thead><tr><th>Entitas</th><th>Atribut kunci</th></tr></thead>
+  <tbody>
+    <tr><td>Tenant / Company</td><td>name, domain, sector, sponsor, lastSweep, nextPentest</td></tr>
+    <tr><td>Asset</td><td>host, type, source, tech, ports, status, risk, lastSeen, findingsCount</td></tr>
+    <tr><td>Finding</td><td>id, title, asset, severity, kev, validation, validator, method, SLA, owner, CVSS, evidence, steps, remediation</td></tr>
+    <tr><td>BoardCard</td><td>findingId, column, assignee</td></tr>
+    <tr><td>Certificate</td><td>certId, findingId, closedAt, validator, openDays, integrity hash</td></tr>
+    <tr><td>ValidationQuota</td><td>period, remaining, burned</td></tr>
+    <tr><td>TestEngagement</td><td>name, type, scope, findings, status, date</td></tr>
+    <tr><td>Report</td><td>template, period, recipients, format, createdAt</td></tr>
+    <tr><td>PortfolioFund</td><td>name, companies[], matrix, dueDiligence[]</td></tr>
+  </tbody>
+</table>
+
+<h2>12. Aturan bisnis kritis</h2>
+<ol>
+  <li>Temuan tidak boleh berstatus “Closed verified” tanpa retest lulus oleh validator berwenang.</li>
+  <li>Request human validation mengurangi kuota; retest remediasi tidak mengurangi kuota.</li>
+  <li>KEV / emergent masuk antrian prioritas dengan SLA terpisah.</li>
+  <li>UI wajib menampilkan aset unscanned — tidak boleh menyembunyikan coverage gap.</li>
+  <li>Sertifikat memuat identitas finding, tanggal, validator, dan penanda integritas.</li>
+  <li>Laporan asuransi hanya menyertakan temuan/penutupan yang memenuhi ambang bukti (configurable).</li>
+</ol>
+
+<h2>13. Metrik keberhasilan</h2>
+<table>
+  <thead><tr><th>Metrik</th><th>Definisi</th><th>Target arah (awal)</th></tr></thead>
+  <tbody>
+    <tr><td>Time-to-validate</td><td>Waktu dari pending → verified/rejected</td><td>Turun; KEV &lt; 24 jam</td></tr>
+    <tr><td>% human-validated (open critical/high)</td><td>Proporsi temuan prioritas tervalidasi manusia</td><td>≥ 80%</td></tr>
+    <tr><td>False positive rejection rate</td><td>Auto findings ditolak saat validasi</td><td>Terukur &amp; tren turun noise</td></tr>
+    <tr><td>Verified closure rate</td><td>Closed dengan sertifikat / total closed</td><td>100% untuk critical</td></tr>
+    <tr><td>Mean time-to-close (critical)</td><td>First seen → certified close</td><td>Turun per kuartal</td></tr>
+    <tr><td>Binder readiness</td><td>% kelengkapan evidence asuransi</td><td>≥ 90% menjelang renewal</td></tr>
+    <tr><td>PE adoption</td><td># dana / perusahaan aktif di Portfolio</td><td>Sesuai GTM</td></tr>
+  </tbody>
+</table>
+
+<h2>14. Roadmap usulan</h2>
+<table>
+  <thead><tr><th>Fase</th><th>Fokus</th><th>Hasil</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Phase 0 — Discovery</strong><br/><span class="muted">Selesai / berjalan</span></td>
+      <td>Riset, positioning, prototype interaktif <code>ca-app</code></td>
+      <td>PRD + demo untuk alignment lead</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 1 — MVP</strong></td>
+      <td>Tenant tunggal, discovery + findings + validation queue + kanban + sertifikat + 2 laporan</td>
+      <td>Pilot pilot mid-market</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2 — Assurance ops</strong></td>
+      <td>Kuota &amp; SLA production, evidence pack, insurance binder, audit log</td>
+      <td>Siap underwriter &amp; auditor</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 3 — PE</strong></td>
+      <td>Multi-company portfolio, DD pipeline, IC pack</td>
+      <td>GTM sponsor PE</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 4 — Scale</strong></td>
+      <td>Integrasi ticketing (Jira), SIEM webhook, API publik, perluasan discovery</td>
+      <td>Operasi skala</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>15. Asumsi, risiko, keputusan terbuka</h2>
+<h3>15.1 Asumsi</h3>
+<ul>
+  <li>Tim pentest Atumcell dapat menopang SLA validasi untuk jumlah tenant pilot.</li>
+  <li>Pelanggan menerima model agentless eksternal sebagai titik masuk.</li>
+  <li>Buyer menghargai sertifikat penutupan lebih dari skor generik.</li>
+</ul>
+<h3>15.2 Risiko</h3>
+<table>
+  <thead><tr><th>Risiko</th><th>Dampak</th><th>Mitigasi</th></tr></thead>
+  <tbody>
+    <tr><td>Kapasitas manusia tidak scale</td><td>SLA jebol</td><td>Kuota, prioritas KEV, tiering paket</td></tr>
+    <tr><td>Terkesan “Bitsight clone”</td><td>Komoditisasi</td><td>Tonjolkan validation label + sertifikat + PE</td></tr>
+    <tr><td>Scope creep ke CNAPP</td><td>Burn engineering</td><td>Non-goals ketat di PRD</td></tr>
+    <tr><td>Duplikasi produk Atumcell existing</td><td>Kanibalisme</td><td>Klarifikasi payung vs produk baru</td></tr>
+  </tbody>
+</table>
+<h3>15.3 Keputusan yang dibutuhkan dari lead</h3>
+<ol>
+  <li>Buyer utama: CISO mid-market, PE, atau keduanya?</li>
+  <li>Hubungan dengan AtumScan / AtumScreen / SpoofCheck?</li>
+  <li>Batas v1: eksternal agentless saja, atau ikut internal/VM?</li>
+  <li>Kedalaman human validation: triage mingguan, continuous red team, atau hybrid (seperti Vector Command Advanced)?</li>
+</ol>
+
+<h2>16. Status prototype saat ini</h2>
+<p>Prototype React (<code>ca-app</code>) sudah mencakup modul:</p>
+<ul>
+  <li>Overview, Attack Surface, Findings (+ detail), Remediation (drag-drop + sertifikat), Testing Cycle, Evidence, Reports, PE Portfolio, Compare vs Rapid7</li>
+  <li>State interaktif: request validation, KEV modal, verify &amp; close, theme light/dark, branding logo Atumcell</li>
+  <li>Data demo fiktif: tenant Northwind Logistics / sponsor Meridian Capital Partners</li>
+</ul>
+<p class="muted">Prototype = alat alignment, bukan spesifikasi final implementasi backend.</p>
+
+<h2>17. Lampiran A — Glosarium</h2>
+<table>
+  <thead><tr><th>Istilah</th><th>Arti</th></tr></thead>
+  <tbody>
+    <tr><td>EASM</td><td>External Attack Surface Management</td></tr>
+    <tr><td>CTEM</td><td>Continuous Threat Exposure Management</td></tr>
+    <tr><td>PTaaS</td><td>Penetration Testing as a Service</td></tr>
+    <tr><td>KEV</td><td>Known Exploited Vulnerability (CISA)</td></tr>
+    <tr><td>Human-validated</td><td>Temuan dikonfirmasi/ditolak oleh tester manusia</td></tr>
+    <tr><td>Verified closure</td><td>Penutupan setelah retest lulus + sertifikat</td></tr>
+    <tr><td>Insurance binder</td><td>Paket bukti untuk underwriter asuransi siber</td></tr>
+  </tbody>
+</table>
+
+<h2>18. Lampiran B — Sejarah dokumen</h2>
+<table>
+  <thead><tr><th>Versi</th><th>Tanggal</th><th>Catatan</th></tr></thead>
+  <tbody>
+    <tr><td>1.0</td><td>10 Sep 2026</td><td>Draft awal dari riset + prototype ca-app + skrip narasi</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top:28px;font-size:9.5pt;color:#6a7382;">
+— Akhir dokumen PRD Continuous Assurance (IT) v1.0 —
+</p>
+
+</body>
+</html>

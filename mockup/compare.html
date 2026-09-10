@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atumcell CA — Perbandingan vs Kompetitor + Rapid7</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="compare-wrap">
+      <div class="compare-hero">
+        <a href="index.html" class="link-compare" style="display: inline-block; margin-bottom: 14px"
+          >← Kembali ke mock-up</a
+        >
+        <h1>Fitur kita vs kompetitor + Rapid7</h1>
+        <p>
+          Rapid7 punya dua lini yang paling relevan: <b>Exposure Command</b> (platform CTEM /
+          assessment) dan <b>Vector Command</b> (jasa continuous red team + validasi manusia).
+          Vector Command adalah analog terdekat dengan arah Continuous Assurance Atumcell.
+        </p>
+      </div>
+
+      <!-- Ringkasan Rapid7 -->
+      <div class="grid g-3" style="margin-bottom: 18px">
+        <div class="card">
+          <div class="card-body">
+            <span class="badge b-teal" style="margin-bottom: 10px">Platform</span>
+            <h3 style="margin: 0 0 8px; font-size: 15px">Exposure Command</h3>
+            <p class="t-dim" style="margin: 0; font-size: 13px; line-height: 1.55">
+              CTEM / Exposure Assessment Platform. Menggabungkan InsightVM + Surface Command
+              (ASM) + cloud + app risk. Fokus: inventaris hybrid, skor berbasis ancaman,
+              attack path, otomasi remediasi. Leader Gartner EAP 2025.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="border-color: rgba(45, 212, 191, 0.35)">
+          <div class="card-body">
+            <span class="badge b-verified" style="margin-bottom: 10px">Paling mirip kita</span>
+            <h3 style="margin: 0 0 8px; font-size: 15px">Vector Command</h3>
+            <p class="t-dim" style="margin: 0; font-size: 13px; line-height: 1.55">
+              Managed continuous red team: recon eksternal berkelanjutan + operator manusia
+              yang mengeksploitasi eksposur secara aman. Same-day report, emergent threat
+              validation, vetted attack paths. Advanced + pentest internal tahunan.
+            </p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <span class="badge b-neutral" style="margin-bottom: 10px">Fondasi</span>
+            <h3 style="margin: 0 0 8px; font-size: 15px">Surface + InsightVM</h3>
+            <p class="t-dim" style="margin: 0; font-size: 13px; line-height: 1.55">
+              Surface Command = attack surface / CAASM. InsightVM = scanner VM klasik, kini
+              jadi mesin di dalam Exposure Command. Bukan “assurance manusia”, melainkan
+              assessment otomatis + kontekstual.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="overflow: auto; margin-bottom: 18px">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Fitur / kapabilitas</th>
+              <th>Rapid7 Exposure Cmd</th>
+              <th>Rapid7 Vector Cmd</th>
+              <th>Bitsight / SSC</th>
+              <th>UpGuard / CyCognito</th>
+              <th class="ours">Atumcell CA v1</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Skor / grade / risk ranking</td>
+              <td class="yes">● threat-aware</td>
+              <td class="partial">◐ prioritas expert</td>
+              <td class="yes">●</td>
+              <td class="yes">●</td>
+              <td class="ours yes">● score ring</td>
+            </tr>
+            <tr>
+              <td>Inventaris attack surface eksternal</td>
+              <td class="yes">● Surface Cmd</td>
+              <td class="yes">● continuous recon</td>
+              <td class="partial">◐</td>
+              <td class="yes">●</td>
+              <td class="ours yes">●</td>
+            </tr>
+            <tr>
+              <td>VM internal / agent / hybrid</td>
+              <td class="yes">● InsightVM</td>
+              <td class="partial">◐ Advanced only</td>
+              <td class="no">—</td>
+              <td class="no">—</td>
+              <td class="ours no">— agentless fokus luar</td>
+            </tr>
+            <tr>
+              <td>Cloud CNAPP / IaC / DSPM</td>
+              <td class="yes">● Ultimate</td>
+              <td class="no">—</td>
+              <td class="no">—</td>
+              <td class="partial">◐</td>
+              <td class="ours no">— di luar v1</td>
+            </tr>
+            <tr>
+              <td>Human exploit validation berkelanjutan</td>
+              <td class="partial">◐ runtime / BAS-ish</td>
+              <td class="yes">● inti produk</td>
+              <td class="no">—</td>
+              <td class="no">—</td>
+              <td class="ours yes">● pembeda</td>
+            </tr>
+            <tr>
+              <td>Label temuan “human-validated”</td>
+              <td class="no">—</td>
+              <td class="partial">◐ di laporan</td>
+              <td class="no">—</td>
+              <td class="no">—</td>
+              <td class="ours yes">● di UI per temuan</td>
+            </tr>
+            <tr>
+              <td>Same-day / cepat setelah exploit sukses</td>
+              <td class="partial">◐ otomasi</td>
+              <td class="yes">● same-day</td>
+              <td class="no">—</td>
+              <td class="no">—</td>
+              <td class="ours partial">◐ SLA validasi</td>
+            </tr>
+            <tr>
+              <td>Emergent threat / KEV response</td>
+              <td class="yes">●</td>
+              <td class="yes">● validasi manusia</td>
+              <td class="partial">◐</td>
+              <td class="partial">◐</td>
+              <td class="ours yes">● badge KEV</td>
+            </tr>
+            <tr>
+              <td>Vetted attack paths / toxic combo</td>
+              <td class="yes">●</td>
+              <td class="yes">●</td>
+              <td class="no">—</td>
+              <td class="partial">◐</td>
+              <td class="ours no">— backlog v2</td>
+            </tr>
+            <tr>
+              <td>Retest + artefak penutupan</td>
+              <td class="partial">◐ rescan</td>
+              <td class="partial">◐ guidance</td>
+              <td class="no">—</td>
+              <td class="partial">◐</td>
+              <td class="ours yes">● sertifikat</td>
+            </tr>
+            <tr>
+              <td>Siklus pentest terhubung monitoring</td>
+              <td class="no">—</td>
+              <td class="yes">● Advanced</td>
+              <td class="no">—</td>
+              <td class="no">—</td>
+              <td class="ours yes">●</td>
+            </tr>
+            <tr>
+              <td>Remediation projects + SLA</td>
+              <td class="yes">● Remediation Hub</td>
+              <td class="partial">◐</td>
+              <td class="partial">◐</td>
+              <td class="yes">●</td>
+              <td class="ours yes">● kanban + SLA</td>
+            </tr>
+            <tr>
+              <td>Binder asuransi / bukti auditor sempit</td>
+              <td class="partial">◐ GRC proof</td>
+              <td class="partial">◐ laporan</td>
+              <td class="partial">◐ rating</td>
+              <td class="partial">◐</td>
+              <td class="ours yes">●</td>
+            </tr>
+            <tr>
+              <td>Portofolio PE + due diligence</td>
+              <td class="no">— enterprise-centric</td>
+              <td class="no">—</td>
+              <td class="yes">●</td>
+              <td class="yes">●</td>
+              <td class="ours yes">● + DD</td>
+            </tr>
+            <tr>
+              <td>Harga / positioning mid-market</td>
+              <td class="partial">◐ enterprise</td>
+              <td class="partial">◐ managed premium</td>
+              <td class="partial">◐</td>
+              <td class="partial">◐</td>
+              <td class="ours yes">● PE mid-market</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diff-grid">
+        <div class="card diff-card">
+          <div class="card-body">
+            <h3>Knowledge dari Rapid7 yang patut diambil</h3>
+            <ul>
+              <li>
+                <b>Pisahkan platform vs jasa manusia.</b> Exposure Command = tool assessment.
+                Vector Command = manusia yang memvalidasi. CA Atumcell paling dekat ke Vector,
+                bukan meniru Exposure Ultimate.
+              </li>
+              <li>
+                <b>Loop Discover → Exploit → Prioritize → Remediate.</b> Buat siklus ini terlihat
+                di UI (kita sudah punya potongan; bisa diperjelas di Ringkasan).
+              </li>
+              <li>
+                <b>Same-day reporting untuk exploit sukses.</b> Jangan biarkan temuan kritis
+                menunggu “batch mingguan” tanpa SLA yang jelas.
+              </li>
+              <li>
+                <b>Emergent threat validation.</b> Saat KEV / CVE panas muncul, ada jalur cepat
+                “validasi sekarang” — bukan hanya badge.
+              </li>
+              <li>
+                <b>Attack path / asset attractiveness.</b> Prioritas bukan hanya CVSS, tapi
+                “apakah bisa dirantai ke aset berharga”. Cocok untuk backlog v2.
+              </li>
+              <li>
+                <b>Coverage gaps.</b> Tampilkan aset yang ditemukan tapi belum masuk cakupan
+                uji — Rapid7 menekankan ini; kita sudah mulai dengan “belum diperiksa”.
+              </li>
+              <li>
+                <b>Advanced = continuous + pentest berkala.</b> Model Vector Command Advanced
+                (red team kontinu + internal tahunan) sangat mirip paket “Continuous Assurance
+                + siklus pengujian” kita.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card diff-card">
+          <div class="card-body">
+            <h3>Di mana kita beda / jangan ikut</h3>
+            <ul>
+              <li>
+                <b>Jangan kejar CNAPP + 500 konektor.</b> Itu medan Exposure Command Ultimate /
+                Wiz / CrowdStrike. Atumcell menang di agentless eksternal + manusia.
+              </li>
+              <li>
+                <b>Sertifikat penutupan bertanggal</b> belum terlihat sebagai artefak produk di
+                Rapid7 — ini tetap pembeda kita untuk asuransi &amp; auditor.
+              </li>
+              <li>
+                <b>Label validasi di UI per temuan</b> lebih eksplisit daripada laporan red team
+                yang “tersembunyi” di PDF.
+              </li>
+              <li>
+                <b>Portofolio PE + pricing mid-market</b> bukan fokus Rapid7; Bitsight lebih dekat
+                di sini, tapi tanpa validasi manusia Atumcell.
+              </li>
+              <li>
+                <b>Bahasa positioning:</b> Rapid7 jual “command your attack surface”. Kita bisa
+                jual “assurance yang bisa dibuktikan” — keyakinan, bukan hanya inventaris.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 18px">
+        <div class="card-head">
+          <h3>Implikasi untuk mock-up / roadmap</h3>
+          <span class="sub">Diambil dari pola Vector + Exposure Command</span>
+        </div>
+        <div class="card-body tight table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Ide dari Rapid7</th>
+                <th>Status di CA v1</th>
+                <th>Aksi yang masuk akal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="t-strong">Discover → Exploit → Prioritize → Remediate</td>
+                <td><span class="badge b-high">Sebagian</span></td>
+                <td class="t-dim">Tambah strip siklus di Ringkasan</td>
+              </tr>
+              <tr>
+                <td class="t-strong">Same-day critical exploit report</td>
+                <td><span class="badge b-pending">Belum</span></td>
+                <td class="t-dim">SLA “critical tervalidasi &lt; 24 jam” di UI</td>
+              </tr>
+              <tr>
+                <td class="t-strong">Emergent threat validation queue</td>
+                <td><span class="badge b-high">Badge KEV saja</span></td>
+                <td class="t-dim">Tombol “Validasi ancaman baru” + antrean khusus</td>
+              </tr>
+              <tr>
+                <td class="t-strong">Vetted attack paths</td>
+                <td><span class="badge b-neutral">Belum</span></td>
+                <td class="t-dim">Backlog v2 — jangan diisi di v1</td>
+              </tr>
+              <tr>
+                <td class="t-strong">Remediation projects (bukan hanya tiket)</td>
+                <td><span class="badge b-high">Kanban ada</span></td>
+                <td class="t-dim">Opsional: grup temuan jadi “proyek perbaikan”</td>
+              </tr>
+              <tr>
+                <td class="t-strong">Coverage gaps</td>
+                <td><span class="badge b-verified">Ada</span></td>
+                <td class="t-dim">Pertahankan &amp; tonjolkan di Ringkasan</td>
+              </tr>
+              <tr>
+                <td class="t-strong">Continuous + annual internal pentest</td>
+                <td><span class="badge b-verified">Modul Siklus ada</span></td>
+                <td class="t-dim">Samakan bahasa paket dengan Vector Advanced</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="annot" style="margin-top: 22px">
+        <span>◆</span>
+        <div>
+          <b>Kesimpulan singkat.</b> Rapid7 membuktikan pasar “assessment kontinu + validasi
+          manusia” itu nyata (Vector Command). Kita tidak perlu meniru Exposure Command yang
+          hybrid/agent-heavy — kita ambil loop, SLA, dan emergent validation-nya, lalu jaga
+          pembeda: sertifikat penutupan, label human-validated di UI, dan portofolio PE.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
