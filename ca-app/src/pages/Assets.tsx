@@ -1,11 +1,16 @@
 import { useMemo, useState } from "react";
 import { DEMO } from "../data/demo";
+import { AttackSurfaceTopology } from "../components/AttackSurfaceTopology";
+import { AttackSurfaceRegions } from "../components/AttackSurfaceRegions";
 
 const FILTERS = ["all", "Subdomain", "IP", "Cloud", "Related domain", "unscanned"] as const;
+
+type ViewMode = "table" | "topology" | "regions";
 
 export function AssetsPage() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
   const [q, setQ] = useState("");
+  const [view, setView] = useState<ViewMode>("table");
 
   const rows = useMemo(() => {
     return DEMO.assets.filter((a) => {
@@ -33,20 +38,43 @@ export function AssetsPage() {
         <div>
           <h1>Attack surface</h1>
           <p>
-            Internet-facing asset inventory. Filters and search work — unscanned assets are not
-            hidden.
+            Internet-facing asset inventory. Table for detail, topology for relationships, cloud
+            regions when the graph gets dense — unscanned assets stay visible in every view.
           </p>
         </div>
         <div className="page-head-actions">
+          <div className="view-switch" role="group" aria-label="Attack surface view">
+            <button
+              type="button"
+              className={`view-switch-btn${view === "table" ? " active" : ""}`}
+              onClick={() => setView("table")}
+            >
+              Table
+            </button>
+            <button
+              type="button"
+              className={`view-switch-btn${view === "topology" ? " active" : ""}`}
+              onClick={() => setView("topology")}
+            >
+              Topology map
+            </button>
+            <button
+              type="button"
+              className={`view-switch-btn${view === "regions" ? " active" : ""}`}
+              onClick={() => setView("regions")}
+            >
+              Cloud / region
+            </button>
+          </div>
           <button
             className="btn btn-sm"
             onClick={() => {
               const blob = new Blob(
                 [
                   "host,type,src,tech,ports,status\n" +
-                    rows.map((a) =>
-                      [a.host, a.type, a.src, a.tech, a.ports, a.status].join(",")
-                    ).join("\n"),
+                    rows
+                      .map((a) => [a.host, a.type, a.src, a.tech, a.ports, a.status].join(","))
+                      .join("\n"),
                 ],
                 { type: "text/csv" }
               );
@@ -110,49 +138,68 @@ export function AssetsPage() {
             </div>
           </div>
         </div>
-        <div className="card-body tight table-wrap">
-          <table className="tbl">
-            <thead>
-              <tr>
-                <th>Asset</th>
-                <th>Type</th>
-                <th>Source</th>
-                <th>Technology</th>
-                <th>Port</th>
-                <th>Status</th>
-                <th>Grade</th>
-                <th>Findings</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((a) => (
-                <tr key={a.host}>
-                  <td className="mono t-strong">{a.host}</td>
-                  <td className="t-dim nowrap">{a.type}</td>
-                  <td className="t-dim nowrap">{a.src}</td>
-                  <td className="t-dim">{a.tech}</td>
-                  <td className="mono t-dim nowrap">{a.ports}</td>
-                  <td className="nowrap">{statusCell(a.status)}</td>
-                  <td>
-                    {a.risk === "—" ? (
-                      <span className="t-dim">—</span>
-                    ) : (
-                      <span className={`grade grade-${a.risk.toLowerCase()}`}>{a.risk}</span>
-                    )}
-                  </td>
-                  <td>{a.findings || <span className="t-dim">0</span>}</td>
-                </tr>
-              ))}
-              {!rows.length && (
+
+        {view === "table" ? (
+          <div className="card-body tight table-wrap">
+            <table className="tbl">
+              <thead>
                 <tr>
-                  <td colSpan={8}>
-                    <div className="empty">No matching assets.</div>
-                  </td>
+                  <th>Asset</th>
+                  <th>Type</th>
+                  <th>Source</th>
+                  <th>Technology</th>
+                  <th>Port</th>
+                  <th>Status</th>
+                  <th>Grade</th>
+                  <th>Findings</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map((a) => (
+                  <tr key={a.host}>
+                    <td className="mono t-strong">{a.host}</td>
+                    <td className="t-dim nowrap">{a.type}</td>
+                    <td className="t-dim nowrap">{a.src}</td>
+                    <td className="t-dim">{a.tech}</td>
+                    <td className="mono t-dim nowrap">{a.ports}</td>
+                    <td className="nowrap">{statusCell(a.status)}</td>
+                    <td>
+                      {a.risk === "—" ? (
+                        <span className="t-dim">—</span>
+                      ) : (
+                        <span className={`grade grade-${a.risk.toLowerCase()}`}>{a.risk}</span>
+                      )}
+                    </td>
+                    <td>{a.findings || <span className="t-dim">0</span>}</td>
+                  </tr>
+                ))}
+                {!rows.length && (
+                  <tr>
+                    <td colSpan={8}>
+                      <div className="empty">No matching assets.</div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : view === "topology" ? (
+          <div className="card-body tight">
+            {!rows.length ? (
+              <div className="empty">No matching assets for topology.</div>
+            ) : (
+              <AttackSurfaceTopology assets={rows} />
+            )}
+          </div>
+        ) : (
+          <div className="card-body tight">
+            {!rows.length ? (
+              <div className="empty">No matching assets for regions.</div>
+            ) : (
+              <AttackSurfaceRegions assets={rows} />
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

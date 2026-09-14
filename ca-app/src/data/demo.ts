@@ -50,13 +50,13 @@ export const DEMO: DemoData = {
   ],
 
   verificationFeed: [
-    { kind: "ok", title: "CA-2026-0138 closed with verification", meta: "Matthew C. · payload re-test · 2 hours ago · Certificate issued" },
-    { kind: "warn", title: "CA-2026-0142 escalated to Critical after manual validation", meta: "Matthew C. · exploitation confirmed · 5 hours ago" },
-    { kind: "warn", title: "CA-2026-0152 queued for emergent KEV validation", meta: "Pulse Secure fingerprint · SLA < 24h · 6 hours ago" },
+    { kind: "ok", title: "ATC-2026-0025 closed with verification", meta: "Matthew C. · payload re-test · 2 hours ago · Certificate issued" },
+    { kind: "warn", title: "ATC-2026-0001 escalated to Critical after manual validation", meta: "Matthew C. · exploitation confirmed · 5 hours ago" },
+    { kind: "warn", title: "ATC-2026-0015 queued for emergent KEV validation", meta: "Pulse Secure fingerprint · SLA < 24h · 6 hours ago" },
     { kind: "", title: "9 automated findings rejected as false positives", meta: "Dilan R. · banner vs payload verification · yesterday" },
-    { kind: "ok", title: "CA-2026-0131 closed with verification", meta: "Dilan R. · TLS configuration fixed · 2 days ago" },
+    { kind: "ok", title: "ATC-2026-0026 closed with verification", meta: "Dilan R. · TLS configuration fixed · 2 days ago" },
     { kind: "", title: "Attack surface sweep detected 6 new assets", meta: "Automated · awaiting triage · 2 days ago" },
-    { kind: "ok", title: "CA-2026-0124 closed with verification", meta: "Dilan R. · S3 public ACL removed · 12 days ago" },
+    { kind: "ok", title: "ATC-2026-0028 closed with verification", meta: "Dilan R. · S3 public ACL removed · 12 days ago" },
     { kind: "", title: "Scope change: staging-api.northwindlog.com approved", meta: "Head of IT · 3 days ago" },
   ],
 
@@ -107,7 +107,7 @@ export const DEMO: DemoData = {
 
   findings: [
     {
-      id: "CA-2026-0142",
+      id: "ATC-2026-0001",
       title: "Subdomain takeover possible on unclaimed WP Engine instance",
       asset: "track.northwindlog.com",
       severity: "critical",
@@ -125,7 +125,7 @@ export const DEMO: DemoData = {
       category: "DNS misconfiguration",
       impact: "Business impact for track.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn track.northwindlog.com
-# demo evidence for CA-2026-0142
+# demo evidence for ATC-2026-0001
 open services detected
 severity=critical cvss=8.6`,
       steps: ["Identify the exposed service on track.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -133,7 +133,7 @@ severity=critical cvss=8.6`,
       note: "",
     },
     {
-      id: "CA-2026-0139",
+      id: "ATC-2026-0002",
       title: "VPN portal runs FortiOS vulnerable to CVE-2024-21762",
       asset: "vpn.northwindlog.com",
       severity: "critical",
@@ -151,7 +151,7 @@ severity=critical cvss=8.6`,
       category: "Software vulnerability",
       impact: "Business impact for vpn.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn vpn.northwindlog.com
-# demo evidence for CA-2026-0139
+# demo evidence for ATC-2026-0002
 open services detected
 severity=critical cvss=9.8`,
       steps: ["Identify the exposed service on vpn.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -159,7 +159,7 @@ severity=critical cvss=9.8`,
       note: "KEV-linked; prioritize emergent validation.",
     },
     {
-      id: "CA-2026-0144",
+      id: "ATC-2026-0003",
       title: "Invoice S3 bucket is publicly readable",
       asset: "nwl-invoices.s3.amazonaws.com",
       severity: "critical",
@@ -177,7 +177,7 @@ severity=critical cvss=9.8`,
       category: "Cloud misconfiguration",
       impact: "Business impact for nwl-invoices.s3.amazonaws.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn nwl-invoices.s3.amazonaws.com
-# demo evidence for CA-2026-0144
+# demo evidence for ATC-2026-0003
 open services detected
 severity=critical cvss=8.2`,
       steps: ["Identify the exposed service on nwl-invoices.s3.amazonaws.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -185,7 +185,7 @@ severity=critical cvss=8.2`,
       note: "",
     },
     {
-      id: "CA-2026-0141",
+      id: "ATC-2026-0004",
       title: "Third-party API key exposed in JavaScript bundle",
       asset: "portal.northwindlog.com",
       severity: "high",
@@ -203,7 +203,7 @@ severity=critical cvss=8.2`,
       category: "Credential exposure",
       impact: "Business impact for portal.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn portal.northwindlog.com
-# demo evidence for CA-2026-0141
+# demo evidence for ATC-2026-0004
 open services detected
 severity=high cvss=7.4`,
       steps: ["Identify the exposed service on portal.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -211,7 +211,7 @@ severity=high cvss=7.4`,
       note: "",
     },
     {
-      id: "CA-2026-0145",
+      id: "ATC-2026-0005",
       title: "RDP interface exposed directly to the internet",
       asset: "13.58.204.77",
       severity: "high",
@@ -229,7 +229,7 @@ severity=high cvss=7.4`,
       category: "Service exposure",
       impact: "Business impact for 13.58.204.77: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn 13.58.204.77
-# demo evidence for CA-2026-0145
+# demo evidence for ATC-2026-0005
 open services detected
 severity=high cvss=7.1`,
       steps: ["Identify the exposed service on 13.58.204.77.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -237,7 +237,7 @@ severity=high cvss=7.1`,
       note: "",
     },
     {
-      id: "CA-2026-0140",
+      id: "ATC-2026-0006",
       title: "DMARC set to p=none allowing domain spoofing",
       asset: "mail.northwindlog.com",
       severity: "high",
@@ -255,7 +255,7 @@ severity=high cvss=7.1`,
       category: "Email security",
       impact: "Business impact for mail.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn mail.northwindlog.com
-# demo evidence for CA-2026-0140
+# demo evidence for ATC-2026-0006
 open services detected
 severity=high cvss=6.8`,
       steps: ["Identify the exposed service on mail.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -263,7 +263,7 @@ severity=high cvss=6.8`,
       note: "",
     },
     {
-      id: "CA-2026-0136",
+      id: "ATC-2026-0007",
       title: "Tomcat Manager accessible with default credentials",
       asset: "dev-wms.northwindlog.com",
       severity: "medium",
@@ -281,7 +281,7 @@ severity=high cvss=6.8`,
       category: "Weak credentials",
       impact: "Business impact for dev-wms.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn dev-wms.northwindlog.com
-# demo evidence for CA-2026-0136
+# demo evidence for ATC-2026-0007
 open services detected
 severity=medium cvss=5.9`,
       steps: ["Identify the exposed service on dev-wms.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -289,7 +289,7 @@ severity=medium cvss=5.9`,
       note: "",
     },
     {
-      id: "CA-2026-0129",
+      id: "ATC-2026-0008",
       title: "Incomplete HTTP security headers on customer portal",
       asset: "portal.northwindlog.com",
       severity: "low",
@@ -307,7 +307,7 @@ severity=medium cvss=5.9`,
       category: "Configuration hardening",
       impact: "Business impact for portal.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn portal.northwindlog.com
-# demo evidence for CA-2026-0129
+# demo evidence for ATC-2026-0008
 open services detected
 severity=low cvss=3.1`,
       steps: ["Identify the exposed service on portal.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -315,7 +315,7 @@ severity=low cvss=3.1`,
       note: "",
     },
     {
-      id: "CA-2026-0146",
+      id: "ATC-2026-0009",
       title: "GitLab instance allows password authentication from internet",
       asset: "git.northwindlog.com",
       severity: "high",
@@ -333,7 +333,7 @@ severity=low cvss=3.1`,
       category: "Service exposure",
       impact: "Business impact for git.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn git.northwindlog.com
-# demo evidence for CA-2026-0146
+# demo evidence for ATC-2026-0009
 open services detected
 severity=high cvss=7.2`,
       steps: ["Identify the exposed service on git.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -341,7 +341,7 @@ severity=high cvss=7.2`,
       note: "",
     },
     {
-      id: "CA-2026-0147",
+      id: "ATC-2026-0010",
       title: "Grafana anonymous viewer enabled on monitoring host",
       asset: "grafana.northwindlog.com",
       severity: "medium",
@@ -359,7 +359,7 @@ severity=high cvss=7.2`,
       category: "Misconfiguration",
       impact: "Business impact for grafana.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn grafana.northwindlog.com
-# demo evidence for CA-2026-0147
+# demo evidence for ATC-2026-0010
 open services detected
 severity=medium cvss=5.4`,
       steps: ["Identify the exposed service on grafana.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -367,7 +367,7 @@ severity=medium cvss=5.4`,
       note: "",
     },
     {
-      id: "CA-2026-0148",
+      id: "ATC-2026-0011",
       title: "Jenkins allows unauthenticated read of job configs",
       asset: "jenkins.northwindlog.com",
       severity: "high",
@@ -385,7 +385,7 @@ severity=medium cvss=5.4`,
       category: "Access control",
       impact: "Business impact for jenkins.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn jenkins.northwindlog.com
-# demo evidence for CA-2026-0148
+# demo evidence for ATC-2026-0011
 open services detected
 severity=high cvss=7.5`,
       steps: ["Identify the exposed service on jenkins.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -393,7 +393,7 @@ severity=high cvss=7.5`,
       note: "",
     },
     {
-      id: "CA-2026-0149",
+      id: "ATC-2026-0012",
       title: "Backup MinIO console reachable without MFA",
       asset: "backup.northwindlog.com",
       severity: "high",
@@ -411,7 +411,7 @@ severity=high cvss=7.5`,
       category: "Access control",
       impact: "Business impact for backup.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn backup.northwindlog.com
-# demo evidence for CA-2026-0149
+# demo evidence for ATC-2026-0012
 open services detected
 severity=high cvss=7.0`,
       steps: ["Identify the exposed service on backup.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -419,7 +419,7 @@ severity=high cvss=7.0`,
       note: "",
     },
     {
-      id: "CA-2026-0150",
+      id: "ATC-2026-0013",
       title: "SSH open to 0.0.0.0/0 on bastion candidate",
       asset: "54.212.88.19",
       severity: "medium",
@@ -437,7 +437,7 @@ severity=high cvss=7.0`,
       category: "Service exposure",
       impact: "Business impact for 54.212.88.19: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn 54.212.88.19
-# demo evidence for CA-2026-0150
+# demo evidence for ATC-2026-0013
 open services detected
 severity=medium cvss=5.8`,
       steps: ["Identify the exposed service on 54.212.88.19.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -445,7 +445,7 @@ severity=medium cvss=5.8`,
       note: "",
     },
     {
-      id: "CA-2026-0151",
+      id: "ATC-2026-0014",
       title: "Mobile API missing rate limiting on auth endpoints",
       asset: "mobile-api.northwindlog.com",
       severity: "medium",
@@ -463,7 +463,7 @@ severity=medium cvss=5.8`,
       category: "API security",
       impact: "Business impact for mobile-api.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn mobile-api.northwindlog.com
-# demo evidence for CA-2026-0151
+# demo evidence for ATC-2026-0014
 open services detected
 severity=medium cvss=5.3`,
       steps: ["Identify the exposed service on mobile-api.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -471,7 +471,7 @@ severity=medium cvss=5.3`,
       note: "",
     },
     {
-      id: "CA-2026-0152",
+      id: "ATC-2026-0015",
       title: "Pulse Secure portal fingerprint matches known vulnerable builds",
       asset: "remote.northwindlog.com",
       severity: "critical",
@@ -489,7 +489,7 @@ severity=medium cvss=5.3`,
       category: "Software vulnerability",
       impact: "Business impact for remote.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn remote.northwindlog.com
-# demo evidence for CA-2026-0152
+# demo evidence for ATC-2026-0015
 open services detected
 severity=critical cvss=9.1`,
       steps: ["Identify the exposed service on remote.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -497,7 +497,7 @@ severity=critical cvss=9.1`,
       note: "KEV-linked; prioritize emergent validation.",
     },
     {
-      id: "CA-2026-0153",
+      id: "ATC-2026-0016",
       title: "Partner portal serves outdated jQuery with known XSS",
       asset: "partners.northwindlog.com",
       severity: "medium",
@@ -515,7 +515,7 @@ severity=critical cvss=9.1`,
       category: "Vulnerable dependency",
       impact: "Business impact for partners.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn partners.northwindlog.com
-# demo evidence for CA-2026-0153
+# demo evidence for ATC-2026-0016
 open services detected
 severity=medium cvss=4.7`,
       steps: ["Identify the exposed service on partners.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -523,7 +523,7 @@ severity=medium cvss=4.7`,
       note: "",
     },
     {
-      id: "CA-2026-0154",
+      id: "ATC-2026-0017",
       title: "Archive logs bucket allows list without auth",
       asset: "nwl-logs-archive.s3.amazonaws.com",
       severity: "high",
@@ -541,7 +541,7 @@ severity=medium cvss=4.7`,
       category: "Cloud misconfiguration",
       impact: "Business impact for nwl-logs-archive.s3.amazonaws.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn nwl-logs-archive.s3.amazonaws.com
-# demo evidence for CA-2026-0154
+# demo evidence for ATC-2026-0017
 open services detected
 severity=high cvss=6.5`,
       steps: ["Identify the exposed service on nwl-logs-archive.s3.amazonaws.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -549,7 +549,7 @@ severity=high cvss=6.5`,
       note: "",
     },
     {
-      id: "CA-2026-0155",
+      id: "ATC-2026-0018",
       title: "Confluence space publicly indexed via search engines",
       asset: "wiki.northwindlog.com",
       severity: "medium",
@@ -567,7 +567,7 @@ severity=high cvss=6.5`,
       category: "Information disclosure",
       impact: "Business impact for wiki.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn wiki.northwindlog.com
-# demo evidence for CA-2026-0155
+# demo evidence for ATC-2026-0018
 open services detected
 severity=medium cvss=5.1`,
       steps: ["Identify the exposed service on wiki.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -575,7 +575,7 @@ severity=medium cvss=5.1`,
       note: "",
     },
     {
-      id: "CA-2026-0156",
+      id: "ATC-2026-0019",
       title: "EDI gateway TLS 1.0 still accepted",
       asset: "edi.northwindlog.com",
       severity: "low",
@@ -593,7 +593,7 @@ severity=medium cvss=5.1`,
       category: "Configuration hardening",
       impact: "Business impact for edi.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn edi.northwindlog.com
-# demo evidence for CA-2026-0156
+# demo evidence for ATC-2026-0019
 open services detected
 severity=low cvss=3.7`,
       steps: ["Identify the exposed service on edi.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -601,7 +601,7 @@ severity=low cvss=3.7`,
       note: "",
     },
     {
-      id: "CA-2026-0157",
+      id: "ATC-2026-0020",
       title: "Customer portal admin path discoverable without auth gate",
       asset: "portal.northwindlog.com",
       severity: "high",
@@ -619,7 +619,7 @@ severity=low cvss=3.7`,
       category: "Access control",
       impact: "Business impact for portal.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn portal.northwindlog.com
-# demo evidence for CA-2026-0157
+# demo evidence for ATC-2026-0020
 open services detected
 severity=high cvss=6.9`,
       steps: ["Identify the exposed service on portal.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -627,7 +627,7 @@ severity=high cvss=6.9`,
       note: "",
     },
     {
-      id: "CA-2026-0158",
+      id: "ATC-2026-0021",
       title: "Open SMB and RDP on newly discovered Windows host",
       asset: "3.88.44.201",
       severity: "critical",
@@ -645,7 +645,7 @@ severity=high cvss=6.9`,
       category: "Service exposure",
       impact: "Business impact for 3.88.44.201: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn 3.88.44.201
-# demo evidence for CA-2026-0158
+# demo evidence for ATC-2026-0021
 open services detected
 severity=critical cvss=8.0`,
       steps: ["Identify the exposed service on 3.88.44.201.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -653,7 +653,7 @@ severity=critical cvss=8.0`,
       note: "",
     },
     {
-      id: "CA-2026-0159",
+      id: "ATC-2026-0022",
       title: "API v2 returns verbose stack traces on 500 responses",
       asset: "api-v2.northwindlog.com",
       severity: "low",
@@ -671,7 +671,7 @@ severity=critical cvss=8.0`,
       category: "Information disclosure",
       impact: "Business impact for api-v2.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn api-v2.northwindlog.com
-# demo evidence for CA-2026-0159
+# demo evidence for ATC-2026-0022
 open services detected
 severity=low cvss=3.4`,
       steps: ["Identify the exposed service on api-v2.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -679,7 +679,7 @@ severity=low cvss=3.4`,
       note: "",
     },
     {
-      id: "CA-2026-0160",
+      id: "ATC-2026-0023",
       title: "Staging API shares production CORS origins",
       asset: "staging-api.northwindlog.com",
       severity: "medium",
@@ -697,7 +697,7 @@ severity=low cvss=3.4`,
       category: "Misconfiguration",
       impact: "Business impact for staging-api.northwindlog.com: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn staging-api.northwindlog.com
-# demo evidence for CA-2026-0160
+# demo evidence for ATC-2026-0023
 open services detected
 severity=medium cvss=5.0`,
       steps: ["Identify the exposed service on staging-api.northwindlog.com.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -705,7 +705,7 @@ severity=medium cvss=5.0`,
       note: "",
     },
     {
-      id: "CA-2026-0161",
+      id: "ATC-2026-0024",
       title: "HQ segment hosts legacy SMB shares reachable from guest VLAN",
       asset: "10.44.0.0/22",
       severity: "high",
@@ -723,7 +723,7 @@ severity=medium cvss=5.0`,
       category: "Network segmentation",
       impact: "Business impact for 10.44.0.0/22: attackers can abuse this exposure to disrupt Northwind Logistics operations, steal customer data, or pivot toward warehouse and partner systems.",
       evidence: `$ nmap -Pn 10.44.0.0/22
-# demo evidence for CA-2026-0161
+# demo evidence for ATC-2026-0024
 open services detected
 severity=high cvss=7.3`,
       steps: ["Identify the exposed service on 10.44.0.0/22.", "Reproduce safely within scope rules.", "Capture evidence without destructive actions."],
@@ -733,22 +733,22 @@ severity=high cvss=7.3`,
   ],
 
   board: [
-    { key: "New", ids: ["CA-2026-0145", "CA-2026-0147", "CA-2026-0150", "CA-2026-0154", "CA-2026-0158", "CA-2026-0160"] },
-    { key: "Assigned", ids: ["CA-2026-0142", "CA-2026-0141", "CA-2026-0140", "CA-2026-0129", "CA-2026-0146", "CA-2026-0149", "CA-2026-0151", "CA-2026-0152", "CA-2026-0153", "CA-2026-0155", "CA-2026-0156", "CA-2026-0159"] },
-    { key: "In progress", ids: ["CA-2026-0139", "CA-2026-0148", "CA-2026-0157"] },
-    { key: "Awaiting verification", ids: ["CA-2026-0144", "CA-2026-0136", "CA-2026-0161"] },
-    { key: "Closed verified", ids: ["CA-2026-0138", "CA-2026-0131", "CA-2026-0127"] },
+    { key: "New", ids: ["ATC-2026-0005", "ATC-2026-0010", "ATC-2026-0013", "ATC-2026-0017", "ATC-2026-0021", "ATC-2026-0023"] },
+    { key: "Assigned", ids: ["ATC-2026-0001", "ATC-2026-0004", "ATC-2026-0006", "ATC-2026-0008", "ATC-2026-0009", "ATC-2026-0012", "ATC-2026-0014", "ATC-2026-0015", "ATC-2026-0016", "ATC-2026-0018", "ATC-2026-0019", "ATC-2026-0022"] },
+    { key: "In progress", ids: ["ATC-2026-0002", "ATC-2026-0011", "ATC-2026-0020"] },
+    { key: "Awaiting verification", ids: ["ATC-2026-0003", "ATC-2026-0007", "ATC-2026-0024"] },
+    { key: "Closed verified", ids: ["ATC-2026-0025", "ATC-2026-0026", "ATC-2026-0027"] },
   ],
 
   closed: [
-    { id: "CA-2026-0138", title: "Jenkins instance exposed without authentication", asset: "ci.northwindlog.com", severity: "critical", closedAt: "9 Sep 2026", validator: "Matthew C.", openDays: 6, certId: "ACV-2026-0138-NWL" },
-    { id: "CA-2026-0131", title: "Expired TLS certificate on partner endpoint", asset: "edi.northwindlog.com", severity: "high", closedAt: "7 Sep 2026", validator: "Dilan R.", openDays: 3, certId: "ACV-2026-0131-NWL" },
-    { id: "CA-2026-0127", title: "Elasticsearch endpoint open on warehouse segment", asset: "10.44.2.19", severity: "critical", closedAt: "2 Sep 2026", validator: "Matthew C.", openDays: 11, certId: "ACV-2026-0127-NWL" },
-    { id: "CA-2026-0124", title: "Publicly writable S3 prefix for shipment photos", asset: "nwl-photos.s3.amazonaws.com", severity: "critical", closedAt: "28 Aug 2026", validator: "Dilan R.", openDays: 8, certId: "ACV-2026-0124-NWL" },
-    { id: "CA-2026-0120", title: "Open Redis without AUTH on staging", asset: "stg-cache.northwindlog.com", severity: "high", closedAt: "22 Aug 2026", validator: "Matthew C.", openDays: 4, certId: "ACV-2026-0120-NWL" },
-    { id: "CA-2026-0115", title: "SPF softfail allowed invoice fraud attempts", asset: "mail.northwindlog.com", severity: "high", closedAt: "15 Aug 2026", validator: "Dilan R.", openDays: 9, certId: "ACV-2026-0115-NWL" },
-    { id: "CA-2026-0110", title: "Outdated OpenSSL on EDI edge", asset: "edi.northwindlog.com", severity: "medium", closedAt: "8 Aug 2026", validator: "Matthew C.", openDays: 12, certId: "ACV-2026-0110-NWL" },
-    { id: "CA-2026-0104", title: "Directory listing enabled on legacy WMS", asset: "wms-legacy.nwl-intl.com", severity: "medium", closedAt: "1 Aug 2026", validator: "Dilan R.", openDays: 5, certId: "ACV-2026-0104-NWL" },
+    { id: "ATC-2026-0025", title: "Jenkins instance exposed without authentication", asset: "ci.northwindlog.com", severity: "critical", closedAt: "9 Sep 2026", validator: "Matthew C.", openDays: 6, certId: "ACV-2026-0025-NWL" },
+    { id: "ATC-2026-0026", title: "Expired TLS certificate on partner endpoint", asset: "edi.northwindlog.com", severity: "high", closedAt: "7 Sep 2026", validator: "Dilan R.", openDays: 3, certId: "ACV-2026-0026-NWL" },
+    { id: "ATC-2026-0027", title: "Elasticsearch endpoint open on warehouse segment", asset: "10.44.2.19", severity: "critical", closedAt: "2 Sep 2026", validator: "Matthew C.", openDays: 11, certId: "ACV-2026-0027-NWL" },
+    { id: "ATC-2026-0028", title: "Publicly writable S3 prefix for shipment photos", asset: "nwl-photos.s3.amazonaws.com", severity: "critical", closedAt: "28 Aug 2026", validator: "Dilan R.", openDays: 8, certId: "ACV-2026-0028-NWL" },
+    { id: "ATC-2026-0029", title: "Open Redis without AUTH on staging", asset: "stg-cache.northwindlog.com", severity: "high", closedAt: "22 Aug 2026", validator: "Matthew C.", openDays: 4, certId: "ACV-2026-0029-NWL" },
+    { id: "ATC-2026-0030", title: "SPF softfail allowed invoice fraud attempts", asset: "mail.northwindlog.com", severity: "high", closedAt: "15 Aug 2026", validator: "Dilan R.", openDays: 9, certId: "ACV-2026-0030-NWL" },
+    { id: "ATC-2026-0031", title: "Outdated OpenSSL on EDI edge", asset: "edi.northwindlog.com", severity: "medium", closedAt: "8 Aug 2026", validator: "Matthew C.", openDays: 12, certId: "ACV-2026-0031-NWL" },
+    { id: "ATC-2026-0032", title: "Directory listing enabled on legacy WMS", asset: "wms-legacy.nwl-intl.com", severity: "medium", closedAt: "1 Aug 2026", validator: "Dilan R.", openDays: 5, certId: "ACV-2026-0032-NWL" },
   ],
 
   reports: [

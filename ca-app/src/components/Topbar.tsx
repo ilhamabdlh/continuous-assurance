@@ -1,24 +1,96 @@
-import { DEMO } from "../data/demo";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 
+function initials(name: string, email: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (parts[0]?.length >= 2) return parts[0].slice(0, 2).toUpperCase();
+  return email.slice(0, 2).toUpperCase() || "CA";
+}
+
 export function Topbar() {
-  const { openModal, findings } = useApp();
+  const { openModal, findings, company, companies, setCompany } = useApp();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const pending = findings.filter((f) => f.validation === "pending" || f.kev).length;
+  const [open, setOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const userRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open && !userOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      if (open && !wrapRef.current?.contains(e.target as Node)) setOpen(false);
+      if (userOpen && !userRef.current?.contains(e.target as Node)) setUserOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        setUserOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, userOpen]);
 
   return (
     <header className="topbar">
-      <div className="tenant">
-        <span className="dot" />
-        <span>{DEMO.tenant.name}</span>
-        <span className="t-dim">▾</span>
+      <div className="tenant-wrap" ref={wrapRef}>
+        <button
+          type="button"
+          className={`tenant${open ? " is-open" : ""}`}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="dot" />
+          <span className="tenant-name">{company.name}</span>
+          <span className="t-dim tenant-caret">{open ? "▴" : "▾"}</span>
+        </button>
+        {open && (
+          <div className="tenant-menu" role="listbox" aria-label="Portfolio companies">
+            <div className="tenant-menu-head">PE portfolio companies</div>
+            <ul className="tenant-menu-list">
+              {companies.map((c) => (
+                <li key={c.name}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={c.name === company.name}
+                    className={`tenant-option${c.name === company.name ? " is-active" : ""}`}
+                    onClick={() => {
+                      setCompany(c.name);
+                      setOpen(false);
+                    }}
+                  >
+                    <span className="tenant-option-main">
+                      <span className="tenant-option-name">{c.name}</span>
+                      <span className="tenant-option-meta">
+                        {c.sector} · {c.tier}
+                      </span>
+                    </span>
+                    <span className={`grade grade-${c.grade.toLowerCase()}`}>{c.grade}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <div className="freshness">
         <span className="live" />
         Last sweep{" "}
         <span className="t-strong" style={{ color: "var(--text-dim)" }}>
-          {DEMO.tenant.lastSweep}
+          {company.lastSweep}
         </span>
         {pending > 0 && (
           <button className="btn btn-sm" style={{ marginLeft: 8 }} onClick={() => openModal("kev")}>
@@ -45,7 +117,41 @@ export function Topbar() {
         <button className="btn btn-primary" onClick={() => openModal("request")}>
           Request human validation
         </button>
-        <div className="avatar">IA</div>
+        <div className="user-menu" ref={userRef}>
+          <button
+            type="button"
+            className="avatar avatar-btn"
+            aria-haspopup="menu"
+            aria-expanded={userOpen}
+            onClick={() => setUserOpen((v) => !v)}
+            title={user?.email}
+          >
+            {user ? initials(user.name, user.email) : "CA"}
+          </button>
+          {userOpen && (
+            <div className="user-menu-pop" role="menu">
+              <div className="user-menu-meta">
+                <div className="t-strong" style={{ textTransform: "capitalize" }}>
+                  {user?.name}
+                </div>
+                <div className="t-dim" style={{ fontSize: 12 }}>
+                  {user?.email}
+                </div>
+              </div>
+              <button
+                type="button"
+                role="menuitem"
+                className="user-menu-item"
+                onClick={() => {
+                  logout();
+                  navigate("/login", { replace: true });
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

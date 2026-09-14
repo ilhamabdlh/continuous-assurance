@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { DEMO } from "../data/demo";
+import { DEFAULT_COMPANY, PORTFOLIO_COMPANIES, type ActiveCompany } from "../data/companies";
 import type {
   BoardColumn,
   ClosedFinding,
@@ -24,6 +25,9 @@ interface AppState {
   modal: ModalKind;
   modalArg?: string;
   toasts: Toast[];
+  company: ActiveCompany;
+  companies: ActiveCompany[];
+  setCompany: (name: string) => void;
   openModal: (kind: ModalKind, arg?: string) => void;
   closeModal: () => void;
   toast: (message: string, tone?: Toast["tone"]) => void;
@@ -48,6 +52,7 @@ function nowLabel() {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const [company, setCompanyState] = useState<ActiveCompany>(DEFAULT_COMPANY);
   const [findings, setFindings] = useState(DEMO.findings.map((f) => ({ ...f })));
   const [board, setBoard] = useState(
     DEMO.board.map((c) => ({ ...c, ids: [...c.ids] }))
@@ -66,6 +71,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setToasts((t) => t.filter((x) => x.id !== id));
     }, 3200);
   }, []);
+
+  const setCompany = useCallback(
+    (name: string) => {
+      const next = PORTFOLIO_COMPANIES.find((c) => c.name === name);
+      if (!next || next.name === company.name) return;
+      setCompanyState(next);
+      toast(`Switched to ${next.name} (demo portfolio company).`, "info");
+    },
+    [company.name, toast]
+  );
 
   const openModal = useCallback((kind: ModalKind, arg?: string) => {
     setModal(kind);
@@ -184,7 +199,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (findingId: string) => {
       const f = findings.find((x) => x.id === findingId);
       if (!f) return;
-      const certId = `ACV-${findingId.replace("CA-", "")}-NWL`;
+      const certId = `ACV-${findingId.replace(/^ATC-/, "")}-NWL`;
       const closedItem: ClosedFinding = {
         id: f.id,
         title: f.title,
@@ -237,6 +252,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       modal,
       modalArg,
       toasts,
+      company,
+      companies: PORTFOLIO_COMPANIES,
+      setCompany,
       openModal,
       closeModal,
       toast,
@@ -256,6 +274,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       modal,
       modalArg,
       toasts,
+      company,
+      setCompany,
       openModal,
       closeModal,
       toast,

@@ -53,12 +53,12 @@ const DEMO = {
   verificationFeed: [
     {
       kind: "ok",
-      title: "CA-2026-0138 ditutup dengan verifikasi",
+      title: "ATC-2026-0025 ditutup dengan verifikasi",
       meta: "Matthew C. · payload re-test · 2 jam lalu · Sertifikat diterbitkan",
     },
     {
       kind: "warn",
-      title: "CA-2026-0142 dinaikkan ke Critical setelah validasi manual",
+      title: "ATC-2026-0001 dinaikkan ke Critical setelah validasi manual",
       meta: "Matthew C. · eksploitasi terkonfirmasi · 5 jam lalu",
     },
     {
@@ -68,7 +68,7 @@ const DEMO = {
     },
     {
       kind: "ok",
-      title: "CA-2026-0131 ditutup dengan verifikasi",
+      title: "ATC-2026-0026 ditutup dengan verifikasi",
       meta: "Dilan R. · konfigurasi TLS diperbaiki · 2 hari lalu",
     },
     {
@@ -104,7 +104,7 @@ const DEMO = {
 
   findings: [
     {
-      id: "CA-2026-0142",
+      id: "ATC-2026-0001",
       title: "Subdomain takeover dimungkinkan pada instance WP Engine tak terklaim",
       asset: "track.northwindlog.com",
       severity: "critical",
@@ -150,7 +150,7 @@ Host: my.wpengine.com
         "Temuan awal ditandai otomatis sebagai severity High berdasarkan sinyal banner. Setelah verifikasi eksploitasi manual, severity dinaikkan ke Critical karena dampaknya menjangkau seluruh cookie berbagi domain.",
     },
     {
-      id: "CA-2026-0139",
+      id: "ATC-2026-0002",
       title: "Portal VPN memakai FortiOS versi rentan terhadap CVE-2024-21762",
       asset: "vpn.northwindlog.com",
       severity: "critical",
@@ -192,7 +192,7 @@ CVE-2024-21762 · ditambahkan 09-02-2024 · eksploitasi terkonfirmasi`,
         "Eksploitasi penuh sengaja tidak dijalankan karena perangkat ini melayani operasi produksi. Verifikasi dilakukan sampai tingkat konfirmasi versi, dan dicatat demikian di laporan agar auditor tahu batas pengujiannya.",
     },
     {
-      id: "CA-2026-0144",
+      id: "ATC-2026-0003",
       title: "Bucket S3 faktur dapat dibaca publik",
       asset: "nwl-invoices.s3.amazonaws.com",
       severity: "critical",
@@ -230,7 +230,7 @@ $ curl -s https://nwl-invoices.s3.amazonaws.com/INV-2026-08-4471.pdf -o /dev/nul
       note: "Satu objek diunduh sebagai bukti lalu dihapus dari sistem Atumcell. Hash objek dicatat di lampiran laporan.",
     },
     {
-      id: "CA-2026-0141",
+      id: "ATC-2026-0004",
       title: "API key pihak ketiga terekspos di bundel JavaScript",
       asset: "portal.northwindlog.com",
       severity: "high",
@@ -267,7 +267,7 @@ HTTP/2 200
       note: "",
     },
     {
-      id: "CA-2026-0145",
+      id: "ATC-2026-0005",
       title: "Antarmuka RDP terekspos langsung ke internet",
       asset: "13.58.204.77",
       severity: "high",
@@ -301,7 +301,7 @@ HTTP/2 200
       note: "Ditampilkan sebagai contoh state 'menunggu validasi' — badge sengaja dibedakan dari temuan tervalidasi.",
     },
     {
-      id: "CA-2026-0140",
+      id: "ATC-2026-0006",
       title: "DMARC disetel ke p=none sehingga domain dapat dipalsukan",
       asset: "mail.northwindlog.com",
       severity: "high",
@@ -337,7 +337,7 @@ $ dig +short TXT northwindlog.com | grep spf
       note: "",
     },
     {
-      id: "CA-2026-0136",
+      id: "ATC-2026-0007",
       title: "Panel Tomcat Manager dapat diakses dengan kredensial bawaan",
       asset: "dev-wms.northwindlog.com",
       severity: "medium",
@@ -370,7 +370,7 @@ HTTP/1.1 200 OK
       note: "",
     },
     {
-      id: "CA-2026-0129",
+      id: "ATC-2026-0008",
       title: "Header keamanan HTTP tidak lengkap pada portal pelanggan",
       asset: "portal.northwindlog.com",
       severity: "low",
@@ -401,43 +401,43 @@ HTTP/1.1 200 OK
 
   // Papan remediasi
   board: [
-    { key: "Baru", ids: ["CA-2026-0145"] },
-    { key: "Ditugaskan", ids: ["CA-2026-0141", "CA-2026-0140"] },
-    { key: "Sedang diperbaiki", ids: ["CA-2026-0139"] },
-    { key: "Menunggu verifikasi", ids: ["CA-2026-0144", "CA-2026-0136"] },
-    { key: "Tertutup terverifikasi", ids: ["CA-2026-0138", "CA-2026-0131", "CA-2026-0127"] },
+    { key: "Baru", ids: ["ATC-2026-0005"] },
+    { key: "Ditugaskan", ids: ["ATC-2026-0004", "ATC-2026-0006"] },
+    { key: "Sedang diperbaiki", ids: ["ATC-2026-0002"] },
+    { key: "Menunggu verifikasi", ids: ["ATC-2026-0003", "ATC-2026-0007"] },
+    { key: "Tertutup terverifikasi", ids: ["ATC-2026-0025", "ATC-2026-0026", "ATC-2026-0027"] },
   ],
 
   closed: [
     {
-      id: "CA-2026-0138",
+      id: "ATC-2026-0025",
       title: "Instance Jenkins terekspos tanpa autentikasi",
       asset: "ci.northwindlog.com",
       severity: "critical",
       closedAt: "9 Sep 2026",
       validator: "Matthew C.",
       openDays: 6,
-      certId: "ACV-2026-0138-NWL",
+      certId: "ACV-2026-0025-NWL",
     },
     {
-      id: "CA-2026-0131",
+      id: "ATC-2026-0026",
       title: "Sertifikat TLS kedaluwarsa pada endpoint mitra",
       asset: "edi.northwindlog.com",
       severity: "high",
       closedAt: "7 Sep 2026",
       validator: "Dilan R.",
       openDays: 3,
-      certId: "ACV-2026-0131-NWL",
+      certId: "ACV-2026-0026-NWL",
     },
     {
-      id: "CA-2026-0127",
+      id: "ATC-2026-0027",
       title: "Endpoint Elasticsearch terbuka pada segmen gudang",
       asset: "10.44.2.19",
       severity: "critical",
       closedAt: "2 Sep 2026",
       validator: "Matthew C.",
       openDays: 11,
-      certId: "ACV-2026-0127-NWL",
+      certId: "ACV-2026-0027-NWL",
     },
   ],
 

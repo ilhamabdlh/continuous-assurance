@@ -598,7 +598,7 @@ function openModal(kind, arg) {
           kontrak, dan sisa kuota jam ditampilkan agar tidak ada kejutan tagihan.
         </div>
         <dl class="kv" style="grid-template-columns:150px 1fr">
-          <dt>Target</dt><dd class="mono">CA-2026-0145 · 13.58.204.77</dd>
+          <dt>Target</dt><dd class="mono">ATC-2026-0005 · 13.58.204.77</dd>
           <dt>Jenis</dt><dd>Validasi eksploitabilitas</dd>
           <dt>Estimasi</dt><dd>4 jam kerja penguji</dd>
           <dt>Sisa kuota</dt><dd>84 jam dari 200 jam kontrak</dd>
