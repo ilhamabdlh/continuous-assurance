@@ -2,93 +2,199 @@ import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { SevBadge, ValidationBadge, SlaPill } from "../components/Badges";
+import type { Severity } from "../types";
 
-const FILTERS = [
-  "all",
-  "critical",
-  "high",
-  "medium",
-  "low",
-  "kev",
-  "verified",
-  "pending",
-] as const;
+const SEV_OPTIONS = ["all", "critical", "high", "medium", "low"] as const;
+const VAL_OPTIONS = ["all", "verified", "pending", "auto", "kev"] as const;
 
 export function FindingsPage() {
-  const { findings, openModal } = useApp();
+  const { findings, assets, openModal, createFinding } = useApp();
   const [params] = useSearchParams();
-  const initial = (params.get("filter") as (typeof FILTERS)[number]) || "all";
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>(
-    FILTERS.includes(initial) ? initial : "all"
+  const initialFilter = params.get("filter") || "all";
+  const [sev, setSev] = useState<(typeof SEV_OPTIONS)[number]>(
+    SEV_OPTIONS.includes(initialFilter as (typeof SEV_OPTIONS)[number])
+      ? (initialFilter as (typeof SEV_OPTIONS)[number])
+      : "all"
+  );
+  const [val, setVal] = useState<(typeof VAL_OPTIONS)[number]>(
+    VAL_OPTIONS.includes(initialFilter as (typeof VAL_OPTIONS)[number])
+      ? (initialFilter as (typeof VAL_OPTIONS)[number])
+      : "all"
   );
   const [q, setQ] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [title, setTitle] = useState("");
+  const [asset, setAsset] = useState(assets[0]?.host || "");
+  const [severity, setSeverity] = useState<Severity>("high");
+  const [category, setCategory] = useState("");
 
   const rows = useMemo(() => {
     return findings.filter((f) => {
-      let ok = true;
-      if (["critical", "high", "medium", "low"].includes(filter)) ok = f.severity === filter;
-      else if (filter === "kev") ok = f.kev;
-      else if (filter === "verified") ok = f.validation === "verified";
-      else if (filter === "pending") ok = f.validation === "pending";
+      const okSev = sev === "all" || f.severity === sev;
+      let okVal = true;
+      if (val === "kev") okVal = f.kev;
+      else if (val === "verified") okVal = f.validation === "verified";
+      else if (val === "pending") okVal = f.validation === "pending";
+      else if (val === "auto") okVal = f.validation === "auto";
       return (
-        ok &&
+        okSev &&
+        okVal &&
         (!q ||
           `${f.id} ${f.title} ${f.asset} ${f.category}`.toLowerCase().includes(q.toLowerCase()))
       );
     });
-  }, [findings, filter, q]);
+  }, [findings, sev, val, q]);
+
+  const closeForm = () => setShowForm(false);
 
   return (
     <section className="screen active">
       <div className="page-head">
         <div>
           <h1>Findings</h1>
-          <p>
-            Every finding carries a validation label. Click a row to open detail and run actions
-            (assign, request validation, retest, close).
-          </p>
+          <p>Human-validated and automated findings across the attack surface.</p>
         </div>
         <div className="page-head-actions">
           <button className="btn btn-sm" onClick={() => openModal("kev")}>
             KEV queue
           </button>
-          <button className="btn btn-primary btn-sm" onClick={() => openModal("request")}>
+          <button
+            className="btn btn-sm btn-primary"
+            onClick={() => {
+              setAsset(assets[0]?.host || "");
+              setShowForm(true);
+            }}
+          >
+            Add finding
+          </button>
+          <button className="btn btn-sm" onClick={() => openModal("request")}>
             Request validation
           </button>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-head" style={{ flexWrap: "wrap", gap: 10 }}>
-          <div className="chips">
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                className={`chip${filter === f ? " active" : ""}`}
-                onClick={() => setFilter(f)}
-              >
-                {f === "all"
-                  ? `All (${findings.length})`
-                  : f === "kev"
-                    ? "In KEV catalog"
-                    : f === "verified"
-                      ? "Human validated"
-                      : f === "pending"
-                        ? "Awaiting validation"
-                        : f[0].toUpperCase() + f.slice(1)}
+      {showForm && (
+        <div
+          className="overlay open"
+          onClick={(e) => e.target === e.currentTarget && closeForm()}
+        >
+          <div className="modal modal-form" role="dialog" aria-labelledby="finding-form-title">
+            <div className="modal-head">
+              <h3 id="finding-form-title">Add finding</h3>
+              <button type="button" className="x-btn" onClick={closeForm}>
+                ×
               </button>
-            ))}
-          </div>
-          <div className="right">
-            <div className="search">
-              <span className="t-dim">⌕</span>
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search finding or asset…"
-              />
+            </div>
+            <div className="modal-body">
+              <div className="crud-form-grid">
+                <label className="span-2">
+                  Title
+                  <input
+                    autoFocus
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Describe the finding"
+                  />
+                </label>
+                <label>
+                  Asset
+                  <select value={asset} onChange={(e) => setAsset(e.target.value)}>
+                    {assets.map((a) => (
+                      <option key={a.host} value={a.host}>
+                        {a.host}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Severity
+                  <select
+                    value={severity}
+                    onChange={(e) => setSeverity(e.target.value as Severity)}
+                  >
+                    <option value="critical">critical</option>
+                    <option value="high">high</option>
+                    <option value="medium">medium</option>
+                    <option value="low">low</option>
+                  </select>
+                </label>
+                <label className="span-2">
+                  Category
+                  <input
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="e.g. Exposure, Auth, Misconfig"
+                  />
+                </label>
+              </div>
+            </div>
+            <div className="modal-foot">
+              <button type="button" className="btn" onClick={closeForm}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  if (!title.trim() || !asset) return;
+                  createFinding({ title, asset, severity, category });
+                  setTitle("");
+                  setCategory("");
+                  setShowForm(false);
+                }}
+              >
+                Save finding
+              </button>
             </div>
           </div>
+        </div>
+      )}
+
+      <div className="card">
+        <div className="toolbar">
+          <div className="toolbar-filters">
+            <label className="field">
+              <span className="field-label">Severity</span>
+              <select
+                className="field-control"
+                value={sev}
+                onChange={(e) => setSev(e.target.value as (typeof SEV_OPTIONS)[number])}
+              >
+                <option value="all">All severities</option>
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+            <label className="field">
+              <span className="field-label">Validation</span>
+              <select
+                className="field-control"
+                value={val}
+                onChange={(e) => setVal(e.target.value as (typeof VAL_OPTIONS)[number])}
+              >
+                <option value="all">All labels</option>
+                <option value="verified">Human validated</option>
+                <option value="pending">Awaiting validation</option>
+                <option value="auto">Automated</option>
+                <option value="kev">In KEV catalog</option>
+              </select>
+            </label>
+          </div>
+          <div className="search toolbar-search">
+            <span className="t-dim" aria-hidden>
+              ⌕
+            </span>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search finding or asset…"
+            />
+          </div>
+          <span className="toolbar-count">
+            {rows.length} of {findings.length}
+          </span>
         </div>
         <div className="card-body tight table-wrap">
           <table className="tbl">

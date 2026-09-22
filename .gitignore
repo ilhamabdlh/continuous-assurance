@@ -30,3 +30,6 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+
+# Local JSON persistence (runtime)
+ca-app/data/store.json

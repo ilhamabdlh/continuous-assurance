@@ -25,9 +25,14 @@ export function FindingDetailPage() {
     verifyAndClose,
     requestKevValidation,
     addFindingComment,
+    deleteFindingComment,
+    deleteFinding,
+    updateFinding,
     toast,
   } = useApp();
   const [draft, setDraft] = useState("");
+  const [editTitle, setEditTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
 
   const f = findings.find((x) => x.id === id);
   const thread = useMemo(
@@ -128,7 +133,47 @@ export function FindingDetailPage() {
             >
               Accept risk
             </button>
+            <button
+              className="btn btn-sm"
+              onClick={() => {
+                setTitleDraft(f.title);
+                setEditTitle(true);
+              }}
+            >
+              Edit title
+            </button>
+            <button
+              className="btn btn-sm"
+              onClick={() => {
+                if (!confirm(`Delete ${f.id}? This cannot be undone in the JSON store.`)) return;
+                deleteFinding(f.id);
+                navigate("/findings");
+              }}
+            >
+              Delete finding
+            </button>
           </div>
+          {editTitle && (
+            <div className="row-flex" style={{ gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+              <input
+                style={{ flex: 1, minWidth: 220 }}
+                value={titleDraft}
+                onChange={(e) => setTitleDraft(e.target.value)}
+              />
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => {
+                  updateFinding(f.id, { title: titleDraft.trim() || f.title });
+                  setEditTitle(false);
+                }}
+              >
+                Save title
+              </button>
+              <button className="btn btn-sm" onClick={() => setEditTitle(false)}>
+                Cancel
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -209,6 +254,14 @@ export function FindingDetailPage() {
                         <strong>{c.author}</strong>
                         <span className="discuss-role">{c.role}</span>
                         <span className="t-dim">{c.at}</span>
+                        <button
+                          type="button"
+                          className="btn btn-sm"
+                          style={{ marginLeft: "auto" }}
+                          onClick={() => deleteFindingComment(c.id)}
+                        >
+                          Delete
+                        </button>
                       </div>
                       <p className="discuss-body">{c.body}</p>
                     </li>

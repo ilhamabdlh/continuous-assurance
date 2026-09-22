@@ -15,7 +15,7 @@ function severityRank(f: Finding) {
 }
 
 export function DashboardPage() {
-  const { findings, feed, openModal, company } = useApp();
+  const { findings, feed, company } = useApp();
   const critHigh = DEMO.findingTrend.critical.map(
     (c, i) => c + DEMO.findingTrend.high[i]
   );
@@ -62,16 +62,8 @@ export function DashboardPage() {
             )}
           </h1>
           <p className="masthead-lede">
-            {company.domain} · {company.tier} · last sweep {company.lastSweep}
+            {company.domain} · {company.tier}
           </p>
-        </div>
-        <div className="page-head-actions" style={{ marginLeft: 0 }}>
-          <button className="btn btn-sm" onClick={() => openModal("kev")}>
-            Validate emergent threats
-          </button>
-          <Link className="btn btn-sm btn-primary" to="/reports">
-            Generate report
-          </Link>
         </div>
       </header>
 
@@ -247,34 +239,6 @@ export function DashboardPage() {
             <span className="sub">Last 12 weeks</span>
           </div>
           <TrendChart score={DEMO.scoreTrend} findings={critHigh} />
-          <div className="chart-legend">
-            <span>
-              <i
-                style={{
-                  display: "inline-block",
-                  width: 18,
-                  height: 2,
-                  background: "var(--text)",
-                  verticalAlign: "middle",
-                  marginRight: 6,
-                }}
-              />
-              Risk score
-            </span>
-            <span>
-              <i
-                style={{
-                  display: "inline-block",
-                  width: 18,
-                  height: 2,
-                  background: "var(--orange)",
-                  verticalAlign: "middle",
-                  marginRight: 6,
-                }}
-              />
-              Critical + high
-            </span>
-          </div>
         </div>
 
         <div className="panel">

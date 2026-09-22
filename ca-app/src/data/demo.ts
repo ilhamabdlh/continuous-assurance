@@ -26,12 +26,13 @@ export const DEMO: DemoData = {
     verifiedDelta: 9,
   },
 
-  scoreTrend: [702, 698, 711, 705, 719, 728, 724, 741, 752, 761, 768, 782],
+  // 12 weekly points — natural motion (plateau, KEV bump, remediation weeks)
+  scoreTrend: [698, 692, 705, 718, 712, 731, 748, 742, 761, 770, 776, 782],
 
   findingTrend: {
-    critical: [7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3],
-    high: [14, 13, 13, 12, 12, 11, 10, 10, 9, 9, 8, 8],
-    medium: [21, 20, 22, 19, 18, 18, 17, 16, 15, 15, 14, 14],
+    critical: [8, 8, 7, 6, 7, 5, 4, 5, 4, 3, 3, 3],
+    high: [16, 15, 14, 13, 14, 12, 11, 11, 10, 9, 8, 8],
+    medium: [24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 14],
   },
 
   assetSplit: {

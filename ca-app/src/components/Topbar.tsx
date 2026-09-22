@@ -13,19 +13,17 @@ function initials(name: string, email: string) {
 
 export function Topbar() {
   const {
-    openModal,
-    findings,
     company,
     companies,
     setCompany,
     alerts,
     markAlertRead,
     markAllAlertsRead,
+    resetToSeed,
   } = useApp();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const pending = findings.filter((f) => f.validation === "pending" || f.kev).length;
   const unread = alerts.filter((a) => !a.read).length;
   const [open, setOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -100,18 +98,7 @@ export function Topbar() {
           </div>
         )}
       </div>
-      <div className="freshness">
-        <span className="live" />
-        Last sweep{" "}
-        <span className="t-strong" style={{ color: "var(--text-dim)" }}>
-          {company.lastSweep}
-        </span>
-        {pending > 0 && (
-          <button className="btn btn-sm" style={{ marginLeft: 8 }} onClick={() => openModal("kev")}>
-            {pending} validation / KEV queue
-          </button>
-        )}
-      </div>
+
       <div className="topbar-right">
         <div className="alerts-wrap" ref={alertsRef}>
           <button
@@ -175,12 +162,6 @@ export function Topbar() {
           </span>
           <span className="theme-toggle-label">{theme === "light" ? "Light" : "Dark"}</span>
         </button>
-        <button className="btn btn-ghost btn-sm" onClick={() => openModal("scope")}>
-          Scope &amp; test rules
-        </button>
-        <button className="btn btn-primary" onClick={() => openModal("request")}>
-          Request human validation
-        </button>
         <div className="user-menu" ref={userRef}>
           <button
             type="button"
@@ -202,6 +183,19 @@ export function Topbar() {
                   {user?.email}
                 </div>
               </div>
+              <button
+                type="button"
+                role="menuitem"
+                className="user-menu-item"
+                onClick={() => {
+                  if (confirm("Reset all demo data back to the seed JSON?")) {
+                    resetToSeed();
+                    setUserOpen(false);
+                  }
+                }}
+              >
+                Reset JSON data
+              </button>
               <button
                 type="button"
                 role="menuitem"
