@@ -15,18 +15,22 @@ type ThemeContextValue = {
 };
 
 const STORAGE_KEY = "ca-theme";
+const MIGRATION_KEY = "ca-theme-default-light";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function readInitialTheme(): Theme {
   try {
+    // One-time: product default is light (ignore prior OS-based dark).
+    if (!localStorage.getItem(MIGRATION_KEY)) {
+      localStorage.setItem(MIGRATION_KEY, "1");
+      localStorage.setItem(STORAGE_KEY, "light");
+      return "light";
+    }
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === "light" || saved === "dark") return saved;
   } catch {
     /* ignore */
-  }
-  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    return "dark";
   }
   return "light";
 }

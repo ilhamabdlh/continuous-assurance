@@ -17,7 +17,7 @@ export interface AuthUser {
 interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  login: (email?: string, password?: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
 }
 
@@ -36,18 +36,20 @@ function loadSession(): AuthUser | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => loadSession());
 
-  const login = useCallback(async (email: string, password: string) => {
-    await new Promise((r) => setTimeout(r, 450));
-    const trimmed = email.trim().toLowerCase();
-    if (!trimmed || !trimmed.includes("@")) {
+  const login = useCallback(async (email?: string, password?: string) => {
+    await new Promise((r) => setTimeout(r, 280));
+    const trimmed = (email ?? "").trim().toLowerCase();
+    // Demo: empty credentials → instant guest session
+    const finalEmail = trimmed.includes("@") ? trimmed : "demo@northwindlog.com";
+    if (trimmed && !trimmed.includes("@")) {
       return { ok: false, error: "Enter a valid work email." };
     }
-    if (!password || password.length < 4) {
+    if (password && password.length > 0 && password.length < 4) {
       return { ok: false, error: "Password must be at least 4 characters (demo)." };
     }
     const next: AuthUser = {
-      email: trimmed,
-      name: trimmed.split("@")[0].replace(/[._]/g, " "),
+      email: finalEmail,
+      name: finalEmail.split("@")[0].replace(/[._]/g, " "),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     setUser(next);

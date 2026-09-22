@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useMemo, useState, type FormEvent } from "react";
 import { useApp } from "../context/AppContext";
 import { SevBadge, ValidationBadge, SlaPill } from "../components/Badges";
 
@@ -17,15 +18,23 @@ export function FindingDetailPage() {
   const navigate = useNavigate();
   const {
     findings,
+    comments,
     requestValidation,
     markFixedRequestRetest,
     assignFinding,
     verifyAndClose,
     requestKevValidation,
+    addFindingComment,
     toast,
   } = useApp();
+  const [draft, setDraft] = useState("");
 
   const f = findings.find((x) => x.id === id);
+  const thread = useMemo(
+    () => comments.filter((c) => c.findingId === id),
+    [comments, id]
+  );
+
   if (!f) {
     return (
       <section className="screen active">
@@ -41,6 +50,12 @@ export function FindingDetailPage() {
       </section>
     );
   }
+
+  const onPost = (e: FormEvent) => {
+    e.preventDefault();
+    addFindingComment(f.id, draft);
+    setDraft("");
+  };
 
   return (
     <section className="screen active">
@@ -63,6 +78,15 @@ export function FindingDetailPage() {
             <ValidationBadge validation={f.validation} />
             <span className="badge b-neutral">CVSS {f.cvss}</span>
             <SlaPill sla={`SLA: ${f.sla}`} state={f.slaState} />
+            {f.change && f.change !== "existing" && (
+              <span className="badge b-high">
+                {f.change === "new"
+                  ? "New since last sweep"
+                  : f.change === "severity_up"
+                    ? "Severity raised"
+                    : "Reopened"}
+              </span>
+            )}
           </div>
           <h2 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 640 }}>{f.title}</h2>
           <div className="t-dim" style={{ fontSize: 13 }}>
@@ -166,6 +190,44 @@ export function FindingDetailPage() {
               </ol>
             </div>
           </div>
+
+          <div className="card">
+            <div className="card-head">
+              <h3>Discussion</h3>
+              <span className="sub">Client ↔ testing team · audit trail</span>
+            </div>
+            <div className="card-body">
+              {thread.length === 0 ? (
+                <p className="t-dim" style={{ margin: "0 0 12px", fontSize: 13 }}>
+                  No comments yet. Ask a question or share remediation context.
+                </p>
+              ) : (
+                <ul className="discuss-list">
+                  {thread.map((c) => (
+                    <li key={c.id} className={`discuss-item role-${c.role}`}>
+                      <div className="discuss-meta">
+                        <strong>{c.author}</strong>
+                        <span className="discuss-role">{c.role}</span>
+                        <span className="t-dim">{c.at}</span>
+                      </div>
+                      <p className="discuss-body">{c.body}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <form className="discuss-form" onSubmit={onPost}>
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder="Ask the testing team, share context, or note a fix window…"
+                  rows={3}
+                />
+                <button type="submit" className="btn btn-sm btn-primary" disabled={!draft.trim()}>
+                  Post comment
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -187,6 +249,16 @@ export function FindingDetailPage() {
                 <dd>{f.kev ? <span className="badge b-kev">Yes</span> : "No"}</dd>
                 <dt>Validator</dt>
                 <dd>{f.validator || "—"}</dd>
+                <dt>Change</dt>
+                <dd>
+                  {f.change === "new"
+                    ? "New"
+                    : f.change === "severity_up"
+                      ? "Severity raised"
+                      : f.change === "reopened"
+                        ? "Reopened"
+                        : "Existing"}
+                </dd>
               </dl>
             </div>
           </div>

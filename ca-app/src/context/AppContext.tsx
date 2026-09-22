@@ -8,10 +8,13 @@ import {
 } from "react";
 import { DEMO } from "../data/demo";
 import { DEFAULT_COMPANY, PORTFOLIO_COMPANIES, type ActiveCompany } from "../data/companies";
+import { SEED_ALERTS, SEED_COMMENTS } from "../data/engagement";
 import type {
+  AlertItem,
   BoardColumn,
   ClosedFinding,
   Finding,
+  FindingComment,
   ModalKind,
   Toast,
 } from "../types";
@@ -21,6 +24,8 @@ interface AppState {
   board: { key: BoardColumn; ids: string[] }[];
   closed: ClosedFinding[];
   feed: { kind: string; title: string; meta: string }[];
+  alerts: AlertItem[];
+  comments: FindingComment[];
   quotaHoursLeft: number;
   modal: ModalKind;
   modalArg?: string;
@@ -37,6 +42,9 @@ interface AppState {
   verifyAndClose: (findingId: string) => void;
   requestKevValidation: (findingId: string) => void;
   assignFinding: (findingId: string, owner: string) => void;
+  markAlertRead: (alertId: string) => void;
+  markAllAlertsRead: () => void;
+  addFindingComment: (findingId: string, body: string) => void;
 }
 
 const AppCtx = createContext<AppState | null>(null);
@@ -59,6 +67,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const [closed, setClosed] = useState(DEMO.closed.map((c) => ({ ...c })));
   const [feed, setFeed] = useState([...DEMO.verificationFeed]);
+  const [alerts, setAlerts] = useState<AlertItem[]>(SEED_ALERTS.map((a) => ({ ...a })));
+  const [comments, setComments] = useState<FindingComment[]>(
+    SEED_COMMENTS.map((c) => ({ ...c }))
+  );
   const [quotaHoursLeft, setQuota] = useState(84);
   const [modal, setModal] = useState<ModalKind>(null);
   const [modalArg, setModalArg] = useState<string | undefined>();
@@ -242,12 +254,48 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [moveFinding, toast]
   );
 
+  const markAlertRead = useCallback((alertId: string) => {
+    setAlerts((prev) => prev.map((a) => (a.id === alertId ? { ...a, read: true } : a)));
+  }, []);
+
+  const markAllAlertsRead = useCallback(() => {
+    setAlerts((prev) => prev.map((a) => ({ ...a, read: true })));
+  }, []);
+
+  const addFindingComment = useCallback(
+    (findingId: string, body: string) => {
+      const trimmed = body.trim();
+      if (!trimmed) return;
+      const entry: FindingComment = {
+        id: `c-${Math.random().toString(36).slice(2, 8)}`,
+        findingId,
+        author: "Ilham A.",
+        role: "client",
+        body: trimmed,
+        at: nowLabel(),
+      };
+      setComments((prev) => [...prev, entry]);
+      setFeed((prev) => [
+        {
+          kind: "",
+          title: `Client commented on ${findingId}`,
+          meta: `Ilham A. · ${nowLabel()}`,
+        },
+        ...prev,
+      ]);
+      toast("Comment posted.");
+    },
+    [toast]
+  );
+
   const value = useMemo(
     () => ({
       findings,
       board,
       closed,
       feed,
+      alerts,
+      comments,
       quotaHoursLeft,
       modal,
       modalArg,
@@ -264,12 +312,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       verifyAndClose,
       requestKevValidation,
       assignFinding,
+      markAlertRead,
+      markAllAlertsRead,
+      addFindingComment,
     }),
     [
       findings,
       board,
       closed,
       feed,
+      alerts,
+      comments,
       quotaHoursLeft,
       modal,
       modalArg,
@@ -285,6 +338,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       verifyAndClose,
       requestKevValidation,
       assignFinding,
+      markAlertRead,
+      markAllAlertsRead,
+      addFindingComment,
     ]
   );
 

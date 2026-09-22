@@ -12,26 +12,40 @@ function initials(name: string, email: string) {
 }
 
 export function Topbar() {
-  const { openModal, findings, company, companies, setCompany } = useApp();
+  const {
+    openModal,
+    findings,
+    company,
+    companies,
+    setCompany,
+    alerts,
+    markAlertRead,
+    markAllAlertsRead,
+  } = useApp();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const pending = findings.filter((f) => f.validation === "pending" || f.kev).length;
+  const unread = alerts.filter((a) => !a.read).length;
   const [open, setOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [alertsOpen, setAlertsOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+  const alertsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open && !userOpen) return;
+    if (!open && !userOpen && !alertsOpen) return;
     const onDoc = (e: MouseEvent) => {
       if (open && !wrapRef.current?.contains(e.target as Node)) setOpen(false);
       if (userOpen && !userRef.current?.contains(e.target as Node)) setUserOpen(false);
+      if (alertsOpen && !alertsRef.current?.contains(e.target as Node)) setAlertsOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
         setUserOpen(false);
+        setAlertsOpen(false);
       }
     };
     document.addEventListener("mousedown", onDoc);
@@ -40,7 +54,7 @@ export function Topbar() {
       document.removeEventListener("mousedown", onDoc);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open, userOpen]);
+  }, [open, userOpen, alertsOpen]);
 
   return (
     <header className="topbar">
@@ -99,6 +113,56 @@ export function Topbar() {
         )}
       </div>
       <div className="topbar-right">
+        <div className="alerts-wrap" ref={alertsRef}>
+          <button
+            type="button"
+            className={`alerts-bell${alertsOpen ? " is-open" : ""}`}
+            aria-haspopup="menu"
+            aria-expanded={alertsOpen}
+            aria-label="Critical finding alerts"
+            onClick={() => setAlertsOpen((v) => !v)}
+          >
+            <span className="alerts-bell-icon" aria-hidden>
+              ✶
+            </span>
+            {unread > 0 && <span className="alerts-badge">{unread}</span>}
+          </button>
+          {alertsOpen && (
+            <div className="alerts-menu" role="menu">
+              <div className="alerts-menu-head">
+                <span>Finding alerts</span>
+                {unread > 0 && (
+                  <button type="button" className="alerts-mark-all" onClick={() => markAllAlertsRead()}>
+                    Mark all read
+                  </button>
+                )}
+              </div>
+              <ul className="alerts-list">
+                {alerts.map((a) => (
+                  <li key={a.id}>
+                    <button
+                      type="button"
+                      className={`alerts-item${a.read ? "" : " is-unread"} kind-${a.kind}`}
+                      onClick={() => {
+                        markAlertRead(a.id);
+                        if (a.findingId) {
+                          navigate(`/findings/${a.findingId}`);
+                          setAlertsOpen(false);
+                        }
+                      }}
+                    >
+                      <span className="alerts-item-title">{a.title}</span>
+                      <span className="alerts-item-meta">{a.meta}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div className="alerts-menu-foot">
+                Demo: Critical / High / KEV also email security@northwindlog.com
+              </div>
+            </div>
+          )}
+        </div>
         <button
           type="button"
           className="theme-toggle"

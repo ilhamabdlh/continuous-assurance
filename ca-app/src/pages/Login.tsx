@@ -15,17 +15,21 @@ export function LoginPage() {
     return <Navigate to="/" replace />;
   }
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const completeLogin = async (nextEmail?: string, nextPassword?: string) => {
     setError(null);
     setBusy(true);
-    const res = await login(email, password);
+    const res = await login(nextEmail, nextPassword);
     setBusy(false);
     if (!res.ok) {
       setError(res.error ?? "Unable to sign in.");
       return;
     }
     navigate("/", { replace: true });
+  };
+
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    await completeLogin(email, password);
   };
 
   return (
@@ -70,7 +74,7 @@ export function LoginPage() {
             <h1>{mode === "signin" ? "Sign in" : "Create an account"}</h1>
             <p>
               {mode === "signin"
-                ? "Enter your work email to access Continuous Assurance."
+                ? "Continue instantly for the demo, or enter a work email."
                 : "Enter your email below to create your account."}
             </p>
           </header>
@@ -85,7 +89,6 @@ export function LoginPage() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </label>
             <label className="auth-field">
@@ -97,7 +100,6 @@ export function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
             </label>
 
@@ -119,10 +121,8 @@ export function LoginPage() {
           <button
             type="button"
             className="auth-oauth"
-            onClick={() => {
-              setEmail("demo@northwindlog.com");
-              setPassword("demo");
-            }}
+            disabled={busy}
+            onClick={() => completeLogin()}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
               <path
@@ -137,7 +137,9 @@ export function LoginPage() {
             By clicking continue, you agree to our{" "}
             <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>.
           </p>
-          <p className="auth-demo-hint">Demo: any valid email + password (≥4 chars).</p>
+          <p className="auth-demo-hint">
+            Demo: click GitHub or Sign in with email — no fields required.
+          </p>
         </div>
       </main>
     </div>

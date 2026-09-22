@@ -31,6 +31,27 @@ export interface Finding {
   steps: string[];
   remediation: string[];
   note: string;
+  /** Demo: change vs previous sweep */
+  change?: "new" | "existing" | "severity_up" | "reopened";
+}
+
+export interface FindingComment {
+  id: string;
+  findingId: string;
+  author: string;
+  role: "client" | "validator" | "system";
+  body: string;
+  at: string;
+}
+
+export interface AlertItem {
+  id: string;
+  kind: "critical" | "high" | "kev" | "info";
+  title: string;
+  meta: string;
+  findingId?: string;
+  read: boolean;
+  at: string;
 }
 
 export interface Asset {

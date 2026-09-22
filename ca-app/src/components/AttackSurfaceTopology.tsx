@@ -7,8 +7,11 @@ import {
   type PointerEvent as REPointerEvent,
   type WheelEvent as REWheelEvent,
 } from "react";
-import type { Asset } from "../types";
+import { Link } from "react-router-dom";
+import type { Asset, Finding } from "../types";
+import { useApp } from "../context/AppContext";
 import { buildTopology, type TopoNode } from "../data/topology";
+import { SevBadge } from "./Badges";
 
 type Props = {
   assets: Asset[];
@@ -32,15 +35,38 @@ function positionsFromNodes(nodes: TopoNode[]): PosMap {
   return map;
 }
 
+function findingsForNode(node: TopoNode, findings: Finding[]): Finding[] {
+  if (node.kind === "root") {
+    if (node.id === "aws-cloud") {
+      return findings.filter(
+        (f) => f.asset.includes("amazonaws.com") || f.asset.includes("s3.")
+      );
+    }
+    return findings.filter(
+      (f) => f.asset === node.id || f.asset.endsWith(`.${node.id}`)
+    );
+  }
+  return findings.filter((f) => f.asset === node.id);
+}
+
+function changeLabel(change?: Finding["change"]) {
+  if (change === "new") return "New";
+  if (change === "severity_up") return "Severity ↑";
+  if (change === "reopened") return "Reopened";
+  return "Existing";
+}
+
 export function AttackSurfaceTopology({ assets }: Props) {
+  const { findings } = useApp();
   const { nodes: layoutNodes, edges } = useMemo(() => buildTopology(assets), [assets]);
   const [positions, setPositions] = useState<PosMap>(() => positionsFromNodes(layoutNodes));
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
   const [pan, setPan] = useState({ x: 20, y: 10 });
   const [zoom, setZoom] = useState(1);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const layoutKey = useMemo(() => layoutNodes.map((n) => n.id).join("|"), [layoutNodes]);
 
-  const [draggingId, setDraggingId] = useState<string | null>(null);
   const panDrag = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
   const nodeDrag = useRef<{
     id: string;
@@ -67,6 +93,16 @@ export function AttackSurfaceTopology({ assets }: Props) {
   );
 
   const selected = nodes.find((n) => n.id === selectedId) || null;
+  const hoverNode = nodes.find((n) => n.id === hoverId) || null;
+  const selectedFindings = useMemo(
+    () => (selected ? findingsForNode(selected, findings) : []),
+    [selected, findings]
+  );
+  const hoverFindings = useMemo(
+    () => (hoverNode ? findingsForNode(hoverNode, findings) : []),
+    [hoverNode, findings]
+  );
+
   const connected = useMemo(() => {
     if (!selectedId) return new Set<string>();
     const s = new Set<string>([selectedId]);
@@ -156,11 +192,25 @@ export function AttackSurfaceTopology({ assets }: Props) {
 
   const nodeById = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
 
+  const sevCounts = (list: Finding[]) => ({
+    critical: list.filter((f) => f.severity === "critical").length,
+    high: list.filter((f) => f.severity === "high").length,
+    medium: list.filter((f) => f.severity === "medium").length,
+    low: list.filter((f) => f.severity === "low").length,
+    newCount: list.filter((f) => f.change === "new").length,
+    upCount: list.filter((f) => f.change === "severity_up").length,
+  });
+
+  const selectedSev = sevCounts(selectedFindings);
+  const tipSev = sevCounts(hoverFindings);
+
   return (
     <div className="topo-layout">
       <div className="topo-canvas-wrap">
         <div className="topo-toolbar">
-          <span className="topo-hint">Drag cards to rearrange · empty canvas to pan · scroll to zoom</span>
+          <span className="topo-hint">
+            Drag cards · hover for severity · click for finding breakdown
+          </span>
           <div className="topo-legend">
             <span>
               <i className="topo-dot is-root" /> Root
@@ -188,100 +238,133 @@ export function AttackSurfaceTopology({ assets }: Props) {
           </div>
         </div>
 
-        <svg
-          ref={svgRef}
-          className={`topo-svg${draggingId ? " is-dragging-node" : ""}`}
-          viewBox={`0 0 ${width} ${height}`}
-          onPointerDown={onCanvasPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
-          onWheel={onWheel}
-        >
-          <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}>
-            {edges.map((e) => {
-              const a = nodeById.get(e.from);
-              const b = nodeById.get(e.to);
-              if (!a || !b) return null;
-              const involvesSelection =
-                !selectedId || connected.has(e.from) || connected.has(e.to);
-              if (!involvesSelection) return null;
-              if (
-                selectedId &&
-                (e.kind === "dns" || e.kind === "related") &&
-                !connected.has(e.from) &&
-                !connected.has(e.to)
-              ) {
-                return null;
-              }
-              if (!selectedId && (e.kind === "dns" || e.kind === "related")) {
-                return null;
-              }
+        <div className="topo-svg-shell">
+          <svg
+            ref={svgRef}
+            className={`topo-svg${draggingId ? " is-dragging-node" : ""}`}
+            viewBox={`0 0 ${width} ${height}`}
+            onPointerDown={onCanvasPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            onWheel={onWheel}
+          >
+            <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`}>
+              {edges.map((e) => {
+                const a = nodeById.get(e.from);
+                const b = nodeById.get(e.to);
+                if (!a || !b) return null;
+                const involvesSelection =
+                  !selectedId || connected.has(e.from) || connected.has(e.to);
+                if (!involvesSelection) return null;
+                if (
+                  selectedId &&
+                  (e.kind === "dns" || e.kind === "related") &&
+                  !connected.has(e.from) &&
+                  !connected.has(e.to)
+                ) {
+                  return null;
+                }
+                if (!selectedId && (e.kind === "dns" || e.kind === "related")) {
+                  return null;
+                }
 
-              const sameBand = Math.abs(a.y - b.y) < 8;
-              let x1: number;
-              let y1: number;
-              let x2: number;
-              let y2: number;
-              let d: string;
-              if (sameBand) {
-                const leftToRight = a.x <= b.x;
-                x1 = leftToRight ? a.x + NODE_W : a.x;
-                y1 = a.y + NODE_H / 2;
-                x2 = leftToRight ? b.x : b.x + NODE_W;
-                y2 = b.y + NODE_H / 2;
-                const mid = (x1 + x2) / 2;
-                d = `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`;
-              } else {
-                const aAbove = a.y < b.y;
-                x1 = a.x + NODE_W / 2;
-                y1 = aAbove ? a.y + NODE_H : a.y;
-                x2 = b.x + NODE_W / 2;
-                y2 = aAbove ? b.y : b.y + NODE_H;
-                const midY = (y1 + y2) / 2;
-                d = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
-              }
-              const active = !selectedId || connected.has(e.from) || connected.has(e.to);
-              return (
-                <path
-                  key={`${e.from}-${e.to}-${e.kind}`}
-                  d={d}
-                  className={`topo-edge topo-edge-${e.kind}${active ? "" : " is-dim"}`}
-                  fill="none"
-                />
-              );
-            })}
+                const sameBand = Math.abs(a.y - b.y) < 8;
+                let x1: number;
+                let y1: number;
+                let x2: number;
+                let y2: number;
+                let d: string;
+                if (sameBand) {
+                  const leftToRight = a.x <= b.x;
+                  x1 = leftToRight ? a.x + NODE_W : a.x;
+                  y1 = a.y + NODE_H / 2;
+                  x2 = leftToRight ? b.x : b.x + NODE_W;
+                  y2 = b.y + NODE_H / 2;
+                  const mid = (x1 + x2) / 2;
+                  d = `M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}`;
+                } else {
+                  const aAbove = a.y < b.y;
+                  x1 = a.x + NODE_W / 2;
+                  y1 = aAbove ? a.y + NODE_H : a.y;
+                  x2 = b.x + NODE_W / 2;
+                  y2 = aAbove ? b.y : b.y + NODE_H;
+                  const midY = (y1 + y2) / 2;
+                  d = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
+                }
+                const active = !selectedId || connected.has(e.from) || connected.has(e.to);
+                return (
+                  <path
+                    key={`${e.from}-${e.to}-${e.kind}`}
+                    d={d}
+                    className={`topo-edge topo-edge-${e.kind}${active ? "" : " is-dim"}`}
+                    fill="none"
+                  />
+                );
+              })}
 
-            {nodes.map((n) => {
-              const dim = Boolean(selectedId && !connected.has(n.id));
-              return (
-                <g
-                  key={n.id}
-                  className={`${statusClass(n.status)}${selectedId === n.id ? " is-selected" : ""}${dim ? " is-dim" : ""} is-draggable`}
-                  transform={`translate(${n.x} ${n.y})`}
-                  onPointerDown={(ev) => onNodePointerDown(ev, n.id)}
-                >
-                  <rect width={NODE_W} height={NODE_H} />
-                  <text x={10} y={17} className="topo-label">
-                    {n.label}
-                  </text>
-                  <text x={10} y={31} className="topo-sub">
-                    {n.kind === "root"
-                      ? "org root"
-                      : `${n.type}${n.findings ? ` · ${n.findings} finding(s)` : ""}`}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
-        </svg>
+              {nodes.map((n) => {
+                const dim = Boolean(selectedId && !connected.has(n.id));
+                return (
+                  <g
+                    key={n.id}
+                    className={`${statusClass(n.status)}${selectedId === n.id ? " is-selected" : ""}${dim ? " is-dim" : ""} is-draggable`}
+                    transform={`translate(${n.x} ${n.y})`}
+                    onPointerDown={(ev) => onNodePointerDown(ev, n.id)}
+                    onPointerEnter={() => setHoverId(n.id)}
+                    onPointerLeave={() => setHoverId((cur) => (cur === n.id ? null : cur))}
+                  >
+                    <rect width={NODE_W} height={NODE_H} />
+                    <text x={10} y={17} className="topo-label">
+                      {n.label}
+                    </text>
+                    <text x={10} y={31} className="topo-sub">
+                      {n.kind === "root"
+                        ? "org root"
+                        : `${n.type}${n.findings ? ` · ${n.findings} finding(s)` : ""}`}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          </svg>
+
+          {hoverNode && hoverId !== selectedId && hoverFindings.length > 0 && (
+            <div
+              className="topo-hover-tip"
+              style={{
+                left: Math.min(
+                  92,
+                  ((hoverNode.x + NODE_W / 2) * zoom + pan.x) / Math.max(width, 1) * 100
+                ) + "%",
+                top: Math.max(
+                  8,
+                  ((hoverNode.y + NODE_H + 8) * zoom + pan.y) / Math.max(height, 1) * 100
+                ) + "%",
+              }}
+            >
+              <div className="mono t-strong" style={{ fontSize: 11 }}>
+                {hoverNode.label}
+              </div>
+              <div className="topo-sev-row">
+                {tipSev.critical > 0 && <span className="topo-sev c">C {tipSev.critical}</span>}
+                {tipSev.high > 0 && <span className="topo-sev h">H {tipSev.high}</span>}
+                {tipSev.medium > 0 && <span className="topo-sev m">M {tipSev.medium}</span>}
+                {tipSev.low > 0 && <span className="topo-sev l">L {tipSev.low}</span>}
+              </div>
+              <div className="topo-tip-meta">
+                {tipSev.newCount} new · {tipSev.upCount} severity ↑ since last sweep
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <aside className="topo-side">
         <div className="topo-side-title">Selected asset</div>
         {!selected && (
           <p className="t-dim" style={{ margin: 0, fontSize: 13 }}>
-            Drag cards to rearrange. Click a node to inspect details and DNS links.
+            Hover a node for severity counts. Click to open findings breakdown and DNS links.
           </p>
         )}
         {selected && (
@@ -319,14 +402,47 @@ export function AttackSurfaceTopology({ assets }: Props) {
                 <dd className="mono">{selected.ports}</dd>
               </div>
               <div>
-                <dt>Source</dt>
-                <dd>{selected.src}</dd>
-              </div>
-              <div>
                 <dt>Findings</dt>
-                <dd>{selected.findings}</dd>
+                <dd>{selectedFindings.length}</dd>
               </div>
             </dl>
+
+            {selectedFindings.length > 0 && (
+              <>
+                <div className="topo-side-label">Since last sweep</div>
+                <div className="topo-sev-row" style={{ marginBottom: 10 }}>
+                  <span className="topo-sev c">C {selectedSev.critical}</span>
+                  <span className="topo-sev h">H {selectedSev.high}</span>
+                  <span className="topo-sev m">M {selectedSev.medium}</span>
+                  <span className="topo-sev l">L {selectedSev.low}</span>
+                </div>
+                <div className="topo-change-meta">
+                  {selectedSev.newCount} new · {selectedSev.upCount} severity raised ·{" "}
+                  {selectedFindings.length - selectedSev.newCount - selectedSev.upCount} existing
+                </div>
+                <div className="topo-side-label">Open findings</div>
+                <ul className="topo-finding-list">
+                  {selectedFindings.slice(0, 6).map((f) => (
+                    <li key={f.id}>
+                      <Link to={`/findings/${f.id}`} className="topo-finding-link">
+                        <span className="topo-finding-top">
+                          <SevBadge severity={f.severity} />
+                          <span className="topo-change-pill">{changeLabel(f.change)}</span>
+                        </span>
+                        <span className="topo-finding-title">{f.title}</span>
+                        <span className="mono topo-finding-id">{f.id}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                {selectedFindings.length > 6 && (
+                  <p className="t-dim" style={{ fontSize: 12, margin: "8px 0 0" }}>
+                    +{selectedFindings.length - 6} more on Findings
+                  </p>
+                )}
+              </>
+            )}
+
             {selected.status === "unscanned" && (
               <div className="callout orange" style={{ marginTop: 12 }}>
                 <div className="co-title">Coverage gap</div>

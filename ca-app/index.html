@@ -8,12 +8,16 @@
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("ca-theme");
-          if (t !== "light" && t !== "dark") {
-            t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          if (!localStorage.getItem("ca-theme-default-light")) {
+            localStorage.setItem("ca-theme-default-light", "1");
+            localStorage.setItem("ca-theme", "light");
           }
+          var t = localStorage.getItem("ca-theme");
+          if (t !== "light" && t !== "dark") t = "light";
           document.documentElement.setAttribute("data-theme", t);
-        } catch (e) {}
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
