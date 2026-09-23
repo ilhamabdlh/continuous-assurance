@@ -5,7 +5,6 @@ Aplikasi interaktif untuk prototipe produk Atumcell Continuous Assurance.
 ## Menjalankan
 
 ```bash
-cd ca-app
 npm install
 npm run dev
 ```
@@ -22,6 +21,5 @@ Buka http://127.0.0.1:5173
 - Antrean KEV / emergent threat (modal)
 - Strip siklus Discover → Validate → Prioritize → Remediate
 - Toast feedback, ekspor CSV, buat laporan (demo)
+- Persistensi lokal ke JSON (`data/store.json`) tanpa database
 - Halaman bandingkan vs Rapid7 / kompetitor
-
-Mock-up HTML lama tetap ada di folder `../mockup` sebagai referensi statis.
