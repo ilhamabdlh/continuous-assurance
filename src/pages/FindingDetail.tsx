@@ -1,6 +1,8 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useApp } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
+import { ASSIGNEES, mentionAtCursor, renderMentionNodes } from "../data/assignees";
 import { SevBadge, ValidationBadge, SlaPill } from "../components/Badges";
 
 function highlight(code: string) {
@@ -30,15 +32,47 @@ export function FindingDetailPage() {
     updateFinding,
     toast,
   } = useApp();
+  const { user } = useAuth();
   const [draft, setDraft] = useState("");
   const [editTitle, setEditTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState("");
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [assignUp, setAssignUp] = useState(false);
+  const [assignMaxHeight, setAssignMaxHeight] = useState(280);
+  const [cursor, setCursor] = useState(0);
+  const [mentionIndex, setMentionIndex] = useState(0);
+  const [mentionDismissed, setMentionDismissed] = useState<string | null>(null);
+  const draftRef = useRef<HTMLTextAreaElement>(null);
+  const assignBtnRef = useRef<HTMLButtonElement>(null);
+  const assignMenuRef = useRef<HTMLDivElement>(null);
+  const assignees = useMemo(
+    () => ASSIGNEES.filter((person) => person.name !== user?.name),
+    [user?.name]
+  );
 
   const f = findings.find((x) => x.id === id);
   const thread = useMemo(
     () => comments.filter((c) => c.findingId === id),
     [comments, id]
   );
+
+  useEffect(() => {
+    if (!assignOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (assignBtnRef.current?.contains(target) || assignMenuRef.current?.contains(target)) return;
+      setAssignOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAssignOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [assignOpen]);
 
   if (!f) {
     return (
@@ -56,10 +90,50 @@ export function FindingDetailPage() {
     );
   }
 
+  const mention = mentionAtCursor(draft, cursor);
+  const mentionKey = mention ? `${mention.start}:${mention.query}` : null;
+  const suggestions =
+    mention && mentionDismissed !== mentionKey
+      ? assignees.filter((person) => {
+          const query = mention.query.toLowerCase();
+          if (!query) return true;
+          return person.name
+            .toLowerCase()
+            .split(/\s+/)
+            .some((part) => part.startsWith(query) || person.name.toLowerCase().startsWith(query));
+        })
+      : [];
+  const activeMention = suggestions.length ? Math.min(mentionIndex, suggestions.length - 1) : 0;
+
+  const insertMention = (name: string) => {
+    if (!mention) return;
+    const insert = `@${name} `;
+    const next = draft.slice(0, mention.start) + insert + draft.slice(cursor);
+    const nextCursor = mention.start + insert.length;
+    setDraft(next);
+    setCursor(nextCursor);
+    setMentionIndex(0);
+    setMentionDismissed(null);
+    requestAnimationFrame(() => {
+      const el = draftRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(nextCursor, nextCursor);
+    });
+  };
+
+  const onDraftChange = (value: string, el: HTMLTextAreaElement) => {
+    setDraft(value);
+    setCursor(el.selectionStart);
+    setMentionIndex(0);
+    setMentionDismissed(null);
+  };
+
   const onPost = (e: FormEvent) => {
     e.preventDefault();
     addFindingComment(f.id, draft);
     setDraft("");
+    setCursor(0);
   };
 
   return (
@@ -73,7 +147,7 @@ export function FindingDetailPage() {
         </span>
       </div>
 
-      <div className="card" style={{ marginBottom: 14 }}>
+      <div className="card finding-head" style={{ marginBottom: 14 }}>
         <div className="card-body">
           <div className="row-flex" style={{ gap: 9, marginBottom: 9, flexWrap: "wrap" }}>
             <SevBadge severity={f.severity} />
@@ -101,12 +175,66 @@ export function FindingDetailPage() {
             <button className="btn btn-primary btn-sm" onClick={() => markFixedRequestRetest(f.id)}>
               Mark fixed &amp; request retest
             </button>
-            <button
-              className="btn btn-sm"
-              onClick={() => assignFinding(f.id, "Platform team")}
-            >
-              Assign
-            </button>
+            <span className="assign-wrap">
+              <button
+                ref={assignBtnRef}
+                type="button"
+                className={`btn btn-sm${assignOpen ? " is-open" : ""}`}
+                aria-haspopup="listbox"
+                aria-expanded={assignOpen}
+                onClick={() => {
+                  const rect = assignBtnRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    const gap = 8;
+                    const spaceBelow = window.innerHeight - rect.bottom - gap;
+                    const spaceAbove = rect.top - gap;
+                    const up = spaceBelow < 180 && spaceAbove > spaceBelow;
+                    setAssignUp(up);
+                    setAssignMaxHeight(Math.max(140, Math.min(280, up ? spaceAbove : spaceBelow)));
+                  }
+                  setAssignOpen((open) => !open);
+                }}
+              >
+                Assign
+                <span className="assign-caret" aria-hidden>
+                  {assignOpen ? "▴" : "▾"}
+                </span>
+              </button>
+              {assignOpen && (
+                <div
+                  ref={assignMenuRef}
+                  className={`assign-menu${assignUp ? " is-up" : ""}`}
+                  style={{ maxHeight: assignMaxHeight }}
+                  role="listbox"
+                  aria-label="Assign finding"
+                >
+                  <div className="assign-menu-head">Assign to</div>
+                  <ul className="assign-menu-list">
+                    {assignees.map((person) => {
+                      const active = person.name === f.owner;
+                      return (
+                        <li key={person.name}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={active}
+                            className={`assign-option${active ? " is-active" : ""}`}
+                            onClick={() => {
+                              setAssignOpen(false);
+                              if (active) return;
+                              assignFinding(f.id, person.name);
+                            }}
+                          >
+                            <span className="assign-option-name">{person.name}</span>
+                            <span className="assign-option-role">{person.role}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </span>
             <button className="btn btn-sm" onClick={() => requestValidation(f.id)}>
               Request validation
             </button>
@@ -263,18 +391,67 @@ export function FindingDetailPage() {
                           Delete
                         </button>
                       </div>
-                      <p className="discuss-body">{c.body}</p>
+                      <p className="discuss-body">
+                        {renderMentionNodes(c.body).map((part, index) =>
+                          part.mention ? (
+                            <span key={index} className="mention">
+                              {part.text}
+                            </span>
+                          ) : (
+                            <span key={index}>{part.text}</span>
+                          )
+                        )}
+                      </p>
                     </li>
                   ))}
                 </ul>
               )}
               <form className="discuss-form" onSubmit={onPost}>
                 <textarea
+                  ref={draftRef}
                   value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  placeholder="Ask the testing team, share context, or note a fix window…"
+                  onChange={(e) => onDraftChange(e.target.value, e.target)}
+                  onSelect={(e) => setCursor(e.currentTarget.selectionStart)}
+                  onKeyDown={(e) => {
+                    if (!suggestions.length) return;
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setMentionIndex((index) => (index + 1) % suggestions.length);
+                    } else if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setMentionIndex((index) => (index - 1 + suggestions.length) % suggestions.length);
+                    } else if (e.key === "Enter" || e.key === "Tab") {
+                      e.preventDefault();
+                      insertMention(suggestions[activeMention].name);
+                    } else if (e.key === "Escape") {
+                      e.preventDefault();
+                      setMentionDismissed(mentionKey);
+                    }
+                  }}
+                  placeholder="Ask the testing team, or type @ to mention someone…"
                   rows={3}
                 />
+                {suggestions.length > 0 && (
+                  <ul className="mention-menu" role="listbox" aria-label="Mention a user">
+                    {suggestions.map((person, index) => (
+                      <li key={person.name}>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={index === activeMention}
+                          className={`mention-option${index === activeMention ? " is-active" : ""}`}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            insertMention(person.name);
+                          }}
+                        >
+                          <span className="mention-option-name">@{person.name}</span>
+                          <span className="mention-option-role">{person.role}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <button type="submit" className="btn btn-sm btn-primary" disabled={!draft.trim()}>
                   Post comment
                 </button>
