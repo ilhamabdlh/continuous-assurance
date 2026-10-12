@@ -152,10 +152,6 @@ a {
   object-fit: contain;
 }
 
-[data-theme="dark"] .atumcell-mark-img,
-[data-theme="dark"] .masthead-logo {
-  filter: brightness(1.45) saturate(1.05);
-}
 
 [data-theme="dark"] .masthead-company-logo {
   filter: brightness(1.18) saturate(1.05);
@@ -3355,6 +3351,9 @@ table.tbl tbody tr:hover {
   width: 28px;
   height: 28px;
   object-fit: contain;
+}
+
+[data-theme="light"] .auth-hero-brand img {
   filter: brightness(1.35);
 }
 

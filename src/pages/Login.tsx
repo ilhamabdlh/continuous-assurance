@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useAtumcellMarkSrc } from "../components/AtumcellLogo";
 import { useAuth } from "../context/AuthContext";
 
 export function LoginPage() {
   const { isAuthenticated, login } = useAuth();
+  const markSrc = useAtumcellMarkSrc();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +40,7 @@ export function LoginPage() {
         <div className="auth-hero-grain" />
         <div className="auth-hero-wash" />
         <Link to="/login" className="auth-hero-brand">
-          <img src="/brand/atumcell-mark.png" alt="" width={28} height={28} />
+          <img src={markSrc} alt="" width={28} height={28} />
           <span>
             Atumcell
             <em>Continuous Assurance</em>

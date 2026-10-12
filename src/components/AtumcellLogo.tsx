@@ -1,15 +1,26 @@
 /** Official Atumcell mark + wordmark lockup */
 
+import { useTheme } from "../context/ThemeContext";
+
+export const ATUMCELL_MARK = "/brand/atumcell-mark.png";
+export const ATUMCELL_MARK_ON_DARK = "/brand/atumcell-mark-on-dark.png";
+
 type MarkProps = {
   className?: string;
   title?: string;
 };
 
+export function useAtumcellMarkSrc() {
+  const { theme } = useTheme();
+  return theme === "dark" ? ATUMCELL_MARK_ON_DARK : ATUMCELL_MARK;
+}
+
 export function AtumcellMark({ className = "atumcell-mark-img", title = "Atumcell" }: MarkProps) {
+  const src = useAtumcellMarkSrc();
   return (
     <img
       className={className}
-      src="/brand/atumcell-mark.png"
+      src={src}
       alt={title}
       width={40}
       height={40}

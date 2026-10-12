@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { useAtumcellMarkSrc } from "../components/AtumcellLogo";
 
 export function ComparePage() {
+  const markSrc = useAtumcellMarkSrc();
   return (
     <section className="screen active">
       <header className="masthead">
@@ -8,7 +10,7 @@ export function ComparePage() {
           <h1 className="masthead-brand">
             <img
               className="masthead-logo"
-              src="/brand/atumcell-mark.png"
+              src={markSrc}
               alt=""
               width={48}
               height={48}
